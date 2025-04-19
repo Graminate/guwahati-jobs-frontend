@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Application {
   id: number;
@@ -13,17 +14,18 @@ export default function ApplicationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // For demonstration, we assume the API returns applications for the logged-in user.
-    fetch("http://localhost:3000/applications")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchApplications = async () => {
+      try {
+        const { data } = await axiosInstance.get("/applications");
         setApplications(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching applications:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchApplications();
   }, []);
 
   return (

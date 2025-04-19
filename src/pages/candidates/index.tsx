@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Candidate {
   id: number;
@@ -16,16 +17,18 @@ export default function CandidatesIndex() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/candidates")
-      .then((res) => res.json())
-      .then((data) => {
-        setCandidates(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchCandidates = async () => {
+      try {
+        const response = await axiosInstance.get("/candidates");
+        setCandidates(response.data);
+      } catch (err) {
         console.error("Error fetching candidates:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchCandidates();
   }, []);
 
   return (

@@ -1,5 +1,6 @@
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import axiosInstance from "@/utils/axiosInstance";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -16,9 +17,9 @@ export default function HomePage() {
   const [jobs, setJobs] = useState<Job[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/jobs")
-      .then((res) => res.json())
-      .then((data) => setJobs(data))
+    axiosInstance
+      .get("/jobs")
+      .then((response) => setJobs(response.data))
       .catch((err) => console.error("Failed to fetch jobs:", err));
   }, []);
 
@@ -38,7 +39,7 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="bg-white py-20 px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Find Your Dream Job in Guwahati
+            Find Your Best Career in Guwahati
           </h1>
           <p className="text-gray-600 text-lg mb-6">
             Browse thousands of jobs and connect with top companies in the

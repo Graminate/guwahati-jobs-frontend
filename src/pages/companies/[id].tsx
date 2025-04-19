@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Company {
   id: number;
@@ -22,10 +23,10 @@ export default function CompanyDetail() {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/companies/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCompany(data);
+      axiosInstance
+        .get(`/companies/${id}`)
+        .then((response) => {
+          setCompany(response.data);
           setLoading(false);
         })
         .catch((err) => {

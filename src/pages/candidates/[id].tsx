@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Candidate {
   id: number;
@@ -17,13 +18,12 @@ export default function CandidateDetail() {
   const { id } = router.query;
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/candidates/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCandidate(data);
+      axiosInstance
+        .get(`/candidates/${id}`)
+        .then((response) => {
+          setCandidate(response.data);
           setLoading(false);
         })
         .catch((err) => {

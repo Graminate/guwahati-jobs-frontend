@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Application {
   id: number;
@@ -16,10 +17,10 @@ export default function EmployerApplicationsPage() {
 
   useEffect(() => {
     // Fetch all applications; in a real app, filter by employer's job postings.
-    fetch("http://localhost:3000/applications")
-      .then((res) => res.json())
-      .then((data) => {
-        setApplications(data);
+    axiosInstance
+      .get("/applications")
+      .then((response) => {
+        setApplications(response.data);
         setLoading(false);
       })
       .catch((err) => {

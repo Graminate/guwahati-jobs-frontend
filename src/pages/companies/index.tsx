@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Company {
   id: number;
@@ -18,10 +19,10 @@ export default function CompaniesIndex() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/companies")
-      .then((res) => res.json())
-      .then((data) => {
-        setCompanies(data);
+    axiosInstance
+      .get("/companies")
+      .then((response) => {
+        setCompanies(response.data);
         setLoading(false);
       })
       .catch((err) => {

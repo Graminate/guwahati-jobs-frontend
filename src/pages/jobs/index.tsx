@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Job {
   id: number;
@@ -21,16 +22,18 @@ export default function JobsIndex() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/jobs")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchJobs = async () => {
+      try {
+        const { data } = await axiosInstance.get("/jobs");
         setJobs(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching jobs:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchJobs();
   }, []);
 
   return (
