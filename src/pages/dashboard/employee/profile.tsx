@@ -72,9 +72,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
+        <h1 className="text-3xl font-bold text-dark">My Profile</h1>
       </header>
       {message && <p className="mb-4 text-green-600">{message}</p>}
       <form

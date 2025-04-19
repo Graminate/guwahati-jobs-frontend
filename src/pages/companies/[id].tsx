@@ -40,9 +40,9 @@ export default function CompanyDetail() {
   if (!company) return <p className="p-8">Company not found.</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-3xl font-bold text-dark">
           {company.company_name}
         </h1>
       </header>

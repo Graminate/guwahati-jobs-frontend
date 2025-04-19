@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface Interview {
   id: number;
@@ -15,10 +16,10 @@ export default function EmployerInterviewsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/interviews")
-      .then((res) => res.json())
-      .then((data) => {
-        setInterviews(data);
+    axiosInstance
+      .get("/interviews")
+      .then((response) => {
+        setInterviews(response.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -28,9 +29,9 @@ export default function EmployerInterviewsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Manage Interviews</h1>
+        <h1 className="text-3xl font-bold text-dark">Manage Interviews</h1>
       </header>
       {loading ? (
         <p>Loading interviews...</p>

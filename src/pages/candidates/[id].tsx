@@ -37,9 +37,9 @@ export default function CandidateDetail() {
   if (!candidate) return <p className="p-8">Candidate not found.</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Candidate Profile</h1>
+        <h1 className="text-3xl font-bold text-dark">Candidate Profile</h1>
       </header>
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-semibold mb-4">

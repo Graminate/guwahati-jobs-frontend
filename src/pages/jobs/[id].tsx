@@ -42,9 +42,9 @@ export default function JobDetail() {
   if (!job) return <p className="p-8">Job not found.</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">{job.title}</h1>
+        <h1 className="text-3xl font-bold text-dark">{job.title}</h1>
       </header>
       <div className="bg-white p-6 rounded-lg shadow">
         <p className="text-gray-700 mb-4">{job.description}</p>

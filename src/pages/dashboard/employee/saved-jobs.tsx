@@ -29,9 +29,9 @@ export default function SavedJobsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Saved Jobs</h1>
+        <h1 className="text-3xl font-bold text-dark">Saved Jobs</h1>
       </header>
       {loading ? (
         <p>Loading saved jobs...</p>

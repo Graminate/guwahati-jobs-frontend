@@ -25,9 +25,9 @@ export default function AlertsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Job Alerts</h1>
+        <h1 className="text-3xl font-bold text-dark">Job Alerts</h1>
       </header>
       {loading ? (
         <p>Loading job alerts...</p>

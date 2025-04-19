@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const PlatformLayout = ({ children }: Props) => {
+const DefaultLayout = ({ children }: Props) => {
   return (
     <div className="flex flex-col min-h-screen bg-light text-dark">
       <Navbar />
@@ -18,4 +18,4 @@ const PlatformLayout = ({ children }: Props) => {
   );
 };
 
-export default PlatformLayout;
+export default DefaultLayout;

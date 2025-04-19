@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import axiosInstance from "@/utils/axiosInstance";
 import Head from "next/head";
+import Link from "next/link";
 import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
-import DefaultLayout from "@/layout/DefaultLayout";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faCheckCircle, faX } from "@fortawesome/free-solid-svg-icons";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,9 +15,12 @@ export default function RegisterPage() {
     password: "",
     first_name: "",
     last_name: "",
-    role: "employee",
+    role: "employee", // Default role
+    phone_number: "", // Add phone_number state
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -23,111 +28,309 @@ export default function RegisterPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Adapter for TextField onChange which passes value directly
+  const handleTextFieldChange = (name: string, value: string) => {
+    setForm({ ...form, [name]: value });
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    
+    console.log("Data being sent to API:", form);
+
+    // Basic validation checks
+    if (form.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Phone number validation (if provided)
+    if (form.phone_number && !/^\+?[\d\s-]{10,}$/.test(form.phone_number)) {
+      setError("Please enter a valid phone number (at least 10 digits)");
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response = await axiosInstance.post("/auth/register", form);
+      // Prepare payload with null handling for phone number
+      const payload = {
+        email: form.email.trim(),
+        password: form.password,
+        first_name: form.first_name.trim(),
+        last_name: form.last_name.trim(),
+        role: form.role,
+        phone_number: form.phone_number ? form.phone_number.trim() : null,
+      };
 
-      if (response.status === 201) {
-        router.push(`/dashboard/${form.role}`);
+      console.log("Registering with data:", payload);
+      const response = await axiosInstance.post("/auth/register", payload);
+      console.log("Registration response:", response);
+
+      if (response.status === 201 || response.status === 200) {
+        // If your backend returns a token on registration (uncommon)
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+
+        router.push({
+          pathname: "/auth/login",
+          query: { registered: "true", email: form.email },
+        });
+      } else {
+        setError(
+          response.data?.message ||
+            "Registration successful, but something unexpected occurred."
+        );
       }
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Registration failed");
+    } catch (err: any) {
+      console.error("Registration error:", err);
+      if (err.response) {
+        setError(
+          err.response.data.message ||
+            err.response.data.error ||
+            "Registration failed. Please check your input."
+        );
+      } else if (err.request) {
+        setError("No response from server. Please try again later.");
+      } else {
+        setError("An unexpected error occurred during registration.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const InfoPanelContent = () => (
+    <div className="flex flex-col justify-top h-full">
+      <div className="lg:hidden mb-4">
+        <ul className="space-y-3">
+          <li className="flex items-center">
+            <Link href="/about" legacyBehavior>
+              <a className="text-white hover:underline">About Us</a>
+            </Link>
+          </li>
+          <li className="flex items-center">
+            <Link href="/auth/login" legacyBehavior>
+              <a className="text-white hover:underline">Login</a>
+            </Link>
+          </li>
+          <li className="flex items-center">
+            <Link href="/" legacyBehavior>
+              <a className="text-white hover:underline">Back to Homepage</a>
+            </Link>
+          </li>
+        </ul>
+      </div>
+
+      <div className="mt-8">
+        <h1 className="text-4xl font-bold mb-8 text-white">
+          Welcome to Guwahati Jobs!
+        </h1>
+        <ul className="space-y-4">
+          <li className="flex items-center">
+            <span className="inline-blockbg-opacity-30 rounded-full p-1 mr-3">
+              <FontAwesomeIcon icon={faCheckCircle} />
+            </span>
+            <span className="text-white">Find local job opportunities</span>
+          </li>
+          <li className="flex items-center">
+            <span className="inline-block bg-opacity-30 rounded-full p-1 mr-3">
+              <FontAwesomeIcon icon={faCheckCircle} />
+            </span>
+            <span className="text-white">
+              Apply easily to verified listings
+            </span>
+          </li>
+          <li className="flex items-center">
+            <span className="inline-block bg-opacity-30 rounded-full p-1 mr-3">
+              <FontAwesomeIcon icon={faCheckCircle} />
+            </span>
+            <span className="text-white">Manage your applications (soon!)</span>
+          </li>
+          <li className="flex items-center">
+            <span className="inline-block bg-opacity-30 rounded-full p-1 mr-3">
+              <FontAwesomeIcon icon={faCheckCircle} />
+            </span>
+            <span className="text-white">
+              Employers: Post jobs and find talent
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
 
   return (
     <>
       <Head>
-        <title>Guwahati Jobs | Register</title>
+        <title>Register | Guwahati Jobs</title>
       </Head>
-      <DefaultLayout>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-          <form
-            onSubmit={handleRegister}
-            className="bg-white shadow-md rounded-md p-8 w-full max-w-md"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
-              Register
-            </h2>
 
-            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-row gap-4">
-                <TextField
-                  label="First Name"
-                  value={form.first_name}
-                  onChange={(value: string) =>
-                    handleChange({
-                      target: { name: "first_name", value },
-                    } as any)
-                  }
-                  placeholder="John"
-                  isRequired
-                />
-
-                <TextField
-                  label="Last Name"
-                  value={form.last_name}
-                  onChange={(value: string) =>
-                    handleChange({
-                      target: { name: "last_name", value },
-                    } as any)
-                  }
-                  placeholder="Doe"
-                  isRequired
-                />
-              </div>
-
-              <TextField
-                label="Email Address"
-                type="email"
-                value={form.email}
-                onChange={(value: string) =>
-                  handleChange({ target: { name: "email", value } } as any)
-                }
-                placeholder="you@example.com"
-                isRequired
-                name="email"
-              />
-
-              <TextField
-                label="Password"
-                type="password"
-                value={form.password}
-                onChange={(value: string) =>
-                  setForm({ ...form, password: value })
-                }
-                placeholder="Password"
-                helperText="Minimum 8 characters"
-                isRequired
-                autoComplete="new-password"
-              />
-
-              <label className="block text-sm font-medium text-gray-700">
-                Role
-              </label>
-
-              <select
-                name="role"
-                value={form.role}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 mb-6"
-              >
-                <option value="employee">Employee</option>
-                <option value="employer">Employer</option>
-              </select>
-
-              <div className="flex flex-col">
-                <Button text="Register" style="primary" type="submit" />
-              </div>
-
-            </div>
-          </form>
+      <div className="min-h-screen lg:flex">
+        <div className="hidden lg:flex lg:flex-col justify-between lg:w-2/5 bg-indigo-200 text-white p-12">
+          <div className="text-2xl font-bold text-white">Guwahati Jobs</div>
+          <div className="flex-grow flex items-center">
+            <InfoPanelContent />
+          </div>
+          <div></div>
         </div>
-      </DefaultLayout>
+
+        <div
+          className={`fixed inset-y-0 left-0 z-30 w-full max-w-sm transform ${
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          } bg-indigo-600 text-white p-6 transition-transform duration-300 ease-in-out lg:hidden`}
+        >
+          <div className="flex justify-between items-center mb-8">
+            <div className="text-2xl font-bold text-white">Guwahati Jobs</div>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-white hover:text-gray-200"
+              aria-label="Close menu"
+            >
+              <FontAwesomeIcon icon={faX} />
+            </button>
+          </div>
+          <InfoPanelContent />
+        </div>
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black opacity-50 z-20 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          ></div>
+        )}
+        <div className="w-full lg:w-3/5 flex flex-col bg-white">
+          <div className="flex justify-between items-center p-4 lg:p-6">
+            <div className="flex items-center justify-between w-full lg:hidden">
+              <div className="text-2xl font-bold text-gray-800">
+                Guwahati Jobs
+              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="text-gray-600 hover:text-gray-900"
+                aria-label="Open menu"
+              >
+                <FontAwesomeIcon icon={faBars} />
+              </button>
+            </div>
+            <div className="hidden lg:block text-2xl font-bold text-transparent">
+              Guwahati Jobs
+            </div>{" "}
+            <div className="hidden md:block text-sm">
+              <span className="text-gray-600 mr-2">
+                Already have an account?
+              </span>
+              <Link href="/auth/login" legacyBehavior>
+                <a className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-400 font-medium">
+                  Login
+                </a>
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex-grow flex items-center justify-center p-4">
+            <div className="w-full max-w-md">
+              <form onSubmit={handleRegister} className="w-full space-y-5">
+                <h2 className="text-3xl font-semibold mb-8 text-gray-800 text-center lg:text-left">
+                  Create your account
+                </h2>
+                {error && (
+                  <p className="text-red-500 text-sm text-center -mt-3 mb-4">
+                    {error}
+                  </p>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <TextField
+                      label="First Name"
+                      value={form.first_name}
+                      onChange={(value: string) =>
+                        handleTextFieldChange("first_name", value)
+                      }
+                      placeholder="John"
+                      isRequired
+                      name="first_name"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <TextField
+                      label="Last Name"
+                      value={form.last_name}
+                      onChange={(value: string) =>
+                        handleTextFieldChange("last_name", value)
+                      }
+                      placeholder="Doe"
+                      isRequired
+                      name="last_name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <TextField
+                    label="Email Address"
+                    type="email"
+                    value={form.email}
+                    onChange={(value: string) =>
+                      handleTextFieldChange("email", value)
+                    }
+                    placeholder="you@example.com"
+                    isRequired
+                    name="email"
+                  />
+                </div>
+                <div>
+                  <TextField
+                    label="Phone Number (Optional)" // Mark as optional in label
+                    type="tel" // Use type="tel" for better mobile input
+                    value={form.phone_number}
+                    onChange={
+                      (value: string) =>
+                        handleTextFieldChange("phone_number", value) // Use adapter
+                    }
+                    placeholder="+91 12345 67890" // Example placeholder
+                    name="phone_number" // Set name attribute
+                    autoComplete="tel" // Add autocomplete hint
+                  />
+                </div>
+                <div>
+                  <TextField
+                    label="Password"
+                    type="password"
+                    value={form.password}
+                    onChange={(value: string) =>
+                      handleTextFieldChange("password", value)
+                    }
+                    placeholder="Password"
+                    helperText="Minimum 8 characters"
+                    isRequired
+                    name="password"
+                    autoComplete="new-password"
+                  />
+                </div>
+                <div className="flex flex-col pt-2">
+                  <Button
+                    text={isLoading ? "Registering..." : "Register"}
+                    style="primary"
+                    type="submit"
+                    isDisabled={isLoading}
+                  />
+                </div>
+                <p className="text-sm text-center mt-4 md:hidden">
+                  Already have an account?{" "}
+                  <Link href="/auth/login" legacyBehavior>
+                    <a className="text-indigo-600 hover:underline font-medium">
+                      Login
+                    </a>
+                  </Link>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
