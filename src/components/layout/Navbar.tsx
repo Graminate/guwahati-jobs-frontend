@@ -133,7 +133,7 @@ const Navbar = () => {
 
   if (loading) {
     return (
-      <nav className="bg-white shadow-sm w-full top-0 left-0">
+      <nav className="bg-white w-full top-0 left-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="animate-pulse bg-gray-500 h-8 w-32 rounded" />
@@ -144,7 +144,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white shadow-sm w-full top-0 left-0">
+    <nav className="bg-white shadow-xs w-full top-0 left-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
@@ -212,7 +212,12 @@ const Navbar = () => {
             )}
             {isLoggedIn && user ? (
               <Menu as="div" className="relative ml-3">
-                <MenuButton className="flex items-center space-x-2">
+                <MenuButton className="flex items-center space-x-3">
+                  <img
+                    src={`https://eu.ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&size=250`}
+                    alt="Profile Picture"
+                    className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+                  />
                   <span className="text-gray-700">
                     {user.first_name} {user.last_name}
                   </span>
@@ -263,13 +268,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 <Link
                   href="/auth/login"
-                  className="text-sm font-medium text-gray-600 hover:text-indigo-500 px-3 py-2 rounded-md"
+                  className="text-sm font-medium text-gray-600 hover:text-indigo-200 px-3 py-2 rounded-md"
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-4 py-1.5 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                  className="px-4 py-1.5 text-sm font-medium rounded-md text-white bg-indigo-200 hover:bg-indigo-100"
                 >
                   Register
                 </Link>

@@ -31,7 +31,7 @@ export default function LoginPage() {
       const redirectPath =
         response.data.role === "employer"
           ? "/dashboard/employer"
-          : "/dashboard/employee";
+          : "/candidate";
       router.push(redirectPath);
     } catch (err: any) {
       console.error("Login error:", err);
@@ -111,10 +111,8 @@ export default function LoginPage() {
           <div className="flex-grow flex items-center">
             <InfoPanelContent />
           </div>
-          {/* Spacer to push content up */}
           <div></div>
         </div>
-        {/* --- Mobile Menu Drawer --- */}
         <div
           className={`fixed inset-y-0 left-0 z-30 w-full max-w-sm transform ${
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -141,9 +139,7 @@ export default function LoginPage() {
         )}
         {/* --- Main Content Area (Form) --- */}
         <div className="w-full lg:w-3/5 flex flex-col bg-white">
-          {/* Top Bar (Mobile and Desktop) */}
           <div className="flex justify-between items-center p-4 lg:p-6">
-            {/* Mobile Header */}
             <div className="flex items-center justify-between w-full lg:hidden">
               <div className="text-2xl font-bold text-dark">Guwahati Jobs</div>
               <button

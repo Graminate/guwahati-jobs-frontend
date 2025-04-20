@@ -220,7 +220,7 @@ export default function RegisterPage() {
             </div>{" "}
             <div className="hidden md:block text-sm">
               <span className="text-gray-600 mr-2">
-                Already have an account?
+                Already have a candidate account?
               </span>
               <Link href="/auth/login" legacyBehavior>
                 <a className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-400 font-medium">
