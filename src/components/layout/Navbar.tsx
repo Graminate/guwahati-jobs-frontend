@@ -17,7 +17,6 @@ import {
   faChevronDown,
   faX,
   faUser,
-  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
@@ -336,8 +335,7 @@ const Navbar = () => {
                 </>
               )}
             </Disclosure>
-            // In the Desktop Navigation section, replace the Menu component
-            with:
+
             {!isLoggedIn && (
               <Menu as="div" className="relative inline-block text-left">
                 <MenuButton className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">

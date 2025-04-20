@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { useRouter } from "next/router";
 import axiosInstance from "@/utils/axiosInstance";
 import TextField from "@/components/ui/TextField";
@@ -7,6 +7,22 @@ import Head from "next/head";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCheckCircle, faX } from "@fortawesome/free-solid-svg-icons";
+import { jwtDecode } from "jwt-decode";
+
+const decodeToken = (token: string): { role: string; exp: number } | null => {
+  try {
+    const decoded = jwtDecode<{ role: string; exp: number }>(token);
+    // Optional: Check expiry client-side, though server verification is key
+    if (decoded.exp * 1000 < Date.now()) {
+      console.warn("Token expired client-side");
+      return null;
+    }
+    return decoded;
+  } catch (error) {
+    console.error("Token decoding failed:", error);
+    return null;
+  }
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,7 +31,31 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // State to manage auth check
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = decodeToken(token);
+      if (decoded) {
+        // User is logged in, redirect
+        const redirectPath =
+          decoded.role === "employer" ? "/dashboard/employer" : "/candidate"; // Adjust if needed
+        router.replace(redirectPath); // Use replace to avoid adding login to history
+        // Keep isCheckingAuth true to prevent rendering login form briefly
+      } else {
+        // Invalid or expired token found
+        localStorage.removeItem("token");
+        setIsCheckingAuth(false); // Allow login page to render
+      }
+    } else {
+      // No token, user is not logged in
+      setIsCheckingAuth(false);
+    }
+  }, [router]);
+
   const handleLogin = async (e: React.FormEvent) => {
+    // ... (keep existing handleLogin logic)
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -28,10 +68,22 @@ export default function LoginPage() {
 
       localStorage.setItem("token", response.data.token);
 
-      const redirectPath =
-        response.data.role === "employer"
-          ? "/dashboard/employer"
-          : "/candidate";
+      // Decode the *new* token to get the role for redirection
+      const decoded = decodeToken(response.data.token);
+      let redirectPath = "/"; // Default fallback
+      if (decoded) {
+        redirectPath =
+          decoded.role === "employer" ? "/dashboard/employer" : "/candidate";
+      } else {
+        // Fallback if decoding new token fails unexpectedly
+        console.error("Failed to decode new token for redirect.");
+        // Maybe use the role from the response if available, otherwise default
+        redirectPath =
+          response.data.user?.role === "employer"
+            ? "/dashboard/employer"
+            : "/candidate";
+      }
+
       router.push(redirectPath);
     } catch (err: any) {
       console.error("Login error:", err);
@@ -49,6 +101,7 @@ export default function LoginPage() {
   };
 
   const InfoPanelContent = () => (
+    // ... (keep existing InfoPanelContent)
     <div className="flex flex-col justify-top h-full">
       <div className="lg:hidden mb-4">
         <ul className="space-y-3">
@@ -98,12 +151,19 @@ export default function LoginPage() {
     </div>
   );
 
+  // Render null or a loading indicator while checking auth
+  if (isCheckingAuth) {
+    return null; // Or a loading spinner component
+  }
+
+  // Render the login page content if not logged in
   return (
     <>
       <Head>
         <title>Login | Guwahati Jobs</title>
       </Head>
 
+      {/* ... (rest of the existing JSX structure) ... */}
       <div className="min-h-screen lg:flex">
         {/* --- Blue Info Panel (Desktop) --- */}
         <div className="hidden lg:flex lg:flex-col justify-between lg:w-2/5 bg-indigo-200 text-white p-12">

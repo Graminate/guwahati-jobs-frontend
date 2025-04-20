@@ -2,8 +2,11 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
 import Link from "next/link";
 import JobPostingHero from "./JobPostingHero";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { isLoggedIn, isLoadingAuth } = useAuth();
+  const getStartedLink = isLoggedIn ? "/candidate" : "/auth/register";
   return (
     <>
       <Head>
@@ -31,8 +34,14 @@ export default function Home() {
             </div>
 
             <Link
-              href="/auth/register"
-              className="inline-block bg-indigo-200 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-100 transition text-base md:text-lg"
+              href={getStartedLink}
+              aria-disabled={isLoadingAuth}
+              onClick={(e) => {
+                if (isLoadingAuth) e.preventDefault();
+              }}
+              className={`inline-block bg-indigo-200 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-100 transition text-base md:text-lg ${
+                isLoadingAuth ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               Get started for free
             </Link>
@@ -170,8 +179,14 @@ export default function Home() {
               {/* Call to Action Button */}
               <div className="mt-8 mb-12">
                 <Link
-                  href="/auth/register" // Update link as needed
-                  className="inline-block bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 transition text-base md:text-lg"
+                  href={getStartedLink}
+                  aria-disabled={isLoadingAuth} // Use context state
+                  onClick={(e) => {
+                    if (isLoadingAuth) e.preventDefault(); // Use context state
+                  }}
+                  className={`inline-block bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 transition text-base md:text-lg ${
+                    isLoadingAuth ? "opacity-50 cursor-not-allowed" : "" // Use context state
+                  }`}
                 >
                   Get started for free
                 </Link>
