@@ -93,7 +93,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="py-20 md:py-28 px-6 bg-white">
+          <section className="py-20 md:py-28">
             <div className="max-w-6xl mx-auto text-center">
               <h2 className="text-4xl sm:text-5xl font-bold text-black mb-20 md:mb-24 max-w-4xl mx-auto">
                 The better solution to attract, screen, and manage talent in one

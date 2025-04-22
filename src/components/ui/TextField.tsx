@@ -1,5 +1,7 @@
 import React, { useState, useId, forwardRef } from "react";
 import clsx from "clsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const EyeOpenIcon = () => (
   <svg
@@ -210,7 +212,17 @@ const TextField = forwardRef<HTMLInputElement, Props>(
                 className="cursor-pointer"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
+                {showPassword ? (
+                  <FontAwesomeIcon
+                    icon={faEyeSlash}
+                    className="size-4 text-gray-300"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faEye}
+                    className="size-4 text-gray-300"
+                  />
+                )}
               </button>
             ) : icon && iconPosition === "right" ? (
               <div className="pointer-events-none">{icon}</div>

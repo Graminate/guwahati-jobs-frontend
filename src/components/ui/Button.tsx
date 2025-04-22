@@ -39,9 +39,9 @@ const Button = ({
       case "primary":
         return "bg-indigo-200 text-sm hover:bg-indigo-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 text-white justify-center";
       case "secondary":
-        return "bg-white text-sm disabled:text-gray-400 disabled:bg-transparent disabled:border-gray-300 hover:bg-indigo-300 hover:bg-teal-50 text-indigo-200 hover:text-indigo-200 border border-indigo-200 justify-center";
+        return "bg-white text-sm disabled:text-gray-400 disabled:bg-transparent disabled:border-gray-300 hover:bg-indigo-300 hover:bg-indigo-400 text-indigo-200 hover:text-indigo-200 border border-indigo-200 justify-center";
       case "ghost":
-        return "bg-transparent hover:bg-gray-500 text-sm font-semibold text-gray-200 justify-center disabled:text-gray-300 disabled:bg-transparent";
+        return "bg-transparent hover:text-indigo-100 text-sm font-semibold text-indigo-200 justify-center disabled:text-gray-300 disabled:bg-transparent";
       default:
         return "";
     }

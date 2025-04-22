@@ -1,141 +1,67 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState, Fragment } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
+  Dialog,
+  DialogPanel,
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
   Transition,
+  TransitionChild,
 } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faChevronDown,
-  faX,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import axiosInstance from "@/utils/axiosInstance";
-import axios from "axios";
+import { faBars, faChevronDown, faX } from "@fortawesome/free-solid-svg-icons";
+import Sidebar from "./Sidebar";
 
-const Navbar = () => {
+type User = {
+  first_name: string;
+  last_name: string;
+};
+
+type HomepageLink = {
+  href: string;
+  label: string;
+  icon?: any;
+};
+
+type UserDropdownItem = {
+  href?: string;
+  onClick?: () => void;
+  label: string;
+};
+
+type NavbarProps = {
+  isLoggedIn: boolean;
+  user: User | null;
+  loading: boolean;
+  handleLogout: () => void;
+  userDropdownItems: UserDropdownItem[];
+  homepageNavLinks: HomepageLink[];
+};
+
+const Navbar = ({
+  isLoggedIn,
+  user,
+  loading,
+  handleLogout,
+  userDropdownItems,
+  homepageNavLinks,
+}: NavbarProps) => {
+  const router = useRouter();
+  const pathname = router.pathname;
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{
-    first_name: string;
-    last_name: string;
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const decoded = decodeToken(token);
-        if (decoded) {
-          setUser(decoded);
-          setIsLoggedIn(true);
-
-          verifyToken(token).catch((error) => {
-            console.error("Background token verification failed:", error);
-          });
-        }
-      } catch (error) {
-        console.error("Auth error:", error);
-        handleLogout();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const decodeToken = (token: string) => {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        window
-          .atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-      return JSON.parse(jsonPayload);
-    } catch (error) {
-      console.error("Token decoding failed:", error);
-      return null;
-    }
-  };
-
-  const verifyToken = async (token: string) => {
-    try {
-      const response = await axiosInstance.get("/auth/verify", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 200) {
-        setUser(response.data.user);
-        setIsLoggedIn(true);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        handleLogout();
-      }
-      throw error;
-    }
-  };
-
-  const toEmployerLogin = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUser(null);
-    window.location.href = "/auth/employer";
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUser(null);
-    window.location.href = "/";
-  };
-
-  const jobSeekerLinks = [
-    { href: "/jobs", label: "Browse Jobs" },
-    { href: "/profile", label: "Your Profile" },
-    { href: "/alerts", label: "Job Alerts" },
-    { href: "/saved-jobs", label: "Saved Jobs" },
-  ];
-
-  const employerLinks: Array<{
-    href?: string;
-    onClick?: () => void;
-    label: string;
-  }> = [{ onClick: toEmployerLogin, label: "Employer Login" }];
-
-  const userDropdownItems = [
-    { href: "/candidate/profile", label: "Profile" },
-    { href: "/candidate/settings/account", label: "Settings" },
-    { onClick: handleLogout, label: "Logout" },
-  ];
 
   if (loading) {
     return (
-      <nav className="bg-white w-full top-0 left-0">
+      <nav className="bg-white shadow-xs w-full top-0 left-0 z-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="animate-pulse bg-gray-500 h-8 w-32 rounded" />
+            <div className="animate-pulse bg-gray-200 h-8 w-32 rounded" />
+            <div className="animate-pulse bg-gray-200 h-8 w-8 rounded md:hidden" />
           </div>
         </div>
       </nav>
@@ -143,298 +69,212 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white shadow-xs w-full top-0 left-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <Image
-                src="/images/logo.png"
-                alt="Guwahati-Jobs.in Logo"
-                width={200}
-                height={200}
-                className="h-10 w-auto"
-              />
-            </Link>
-          </div>
+    <>
+      <nav className="bg-white shadow-xs w-full top-0 left-0 z-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo/Brand */}
+            <div className="flex-shrink-0 flex items-center">
+              <Link href="/" className="flex items-center space-x-2">
+                <Image
+                  src="/images/logo.png"
+                  alt="Guwahati-Jobs.in Logo"
+                  width={200}
+                  height={40}
+                  className="h-10 w-auto"
+                  priority
+                />
+              </Link>
+            </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
-            {!isLoggedIn && (
-              <Menu as="div" className="relative inline-block text-left">
-                <MenuButton className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                  For Employers
-                  <FontAwesomeIcon
-                    icon={faChevronDown}
-                    className="ml-2 h-4 w-4 text-gray-400"
-                  />
-                </MenuButton>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <MenuItems className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg focus:outline-none">
-                    {employerLinks.map((link) => (
-                      <MenuItem key={link.label}>
-                        {({ focus }) =>
-                          "href" in link ? (
-                            <Link
-                              href={link.href!}
-                              className={`${
-                                focus ? "bg-gray-500" : ""
-                              } block rounded-md px-4 py-2 text-sm text-dark`}
-                            >
-                              {link.label}
-                            </Link>
-                          ) : (
-                            <div
-                              onClick={link.onClick}
-                              className={`${
-                                focus ? "bg-gray-500" : ""
-                              } block rounded-md px-4 py-2 text-sm text-dark cursor-pointer`}
-                            >
-                              {link.label}
-                            </div>
-                          )
-                        }
-                      </MenuItem>
-                    ))}
-                  </MenuItems>
-                </Transition>
-              </Menu>
-            )}
-            {isLoggedIn && user ? (
-              <Menu as="div" className="relative ml-3">
-                <MenuButton className="flex items-center space-x-3">
-                  <img
-                    src={`https://eu.ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&size=250`}
-                    alt="Profile Picture"
-                    className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-600"
-                  />
-                  <span className="text-gray-700">
-                    {user.first_name} {user.last_name}
-                  </span>
-                  <FontAwesomeIcon
-                    icon={faChevronDown}
-                    className="h-4 w-4 text-gray-400"
-                  />
-                </MenuButton>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <MenuItems className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg focus:outline-none">
-                    {userDropdownItems.map((item) => (
-                      <MenuItem key={item.label}>
-                        {({ focus }) => (
-                          <div
-                            onClick={item.onClick}
-                            className={`${
-                              focus ? "bg-gray-500" : ""
-                            } px-4 py-2 text-sm text-dark cursor-pointer`}
-                          >
-                            {item.href ? (
-                              <Link
-                                href={item.href}
-                                className="flex items-center"
-                              >
-                                {item.label}
-                              </Link>
-                            ) : (
-                              <div className="flex items-center">
-                                {item.label}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </MenuItem>
-                    ))}
-                  </MenuItems>
-                </Transition>
-              </Menu>
-            ) : (
-              <div className="flex items-center space-x-3">
-                <Link
-                  href="/auth/login"
-                  className="text-sm font-medium text-gray-600 hover:text-indigo-200 px-3 py-2 rounded-md"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/auth/register"
-                  className="px-4 py-1.5 text-sm font-medium rounded-md text-white bg-indigo-200 hover:bg-indigo-100"
-                >
-                  Register
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-gray-500 hover:text-gray-600"
-            >
-              <span className="sr-only">Open menu</span>
-              <FontAwesomeIcon
-                icon={mobileMenuOpen ? faX : faBars}
-                className="h-6 w-6"
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <Transition
-        show={mobileMenuOpen}
-        as={Fragment}
-        enter="duration-150 ease-out"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="duration-100 ease-in"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <div className="md:hidden absolute top-16 inset-x-0 p-2 bg-white shadow-lg z-40">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Disclosure>
-              {({ open }) => (
-                <>
-                  <DisclosureButton className="w-full flex justify-between items-center px-3 py-2 text-left text-sm font-medium">
-                    For Job Seekers
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      className={`${open ? "rotate-180" : ""} h-4 w-4`}
-                    />
-                  </DisclosureButton>
-                  <DisclosurePanel className="pl-3">
-                    {jobSeekerLinks.map((link) => (
-                      <Link
-                        key={link.label}
-                        href={link.href || "#"}
-                        className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
-
-            {!isLoggedIn && (
-              <Menu as="div" className="relative inline-block text-left">
-                <MenuButton className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                  For Employers
-                  <FontAwesomeIcon
-                    icon={faChevronDown}
-                    className="ml-2 h-4 w-4 text-gray-400"
-                  />
-                </MenuButton>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <MenuItems className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg focus:outline-none">
-                    {employerLinks.map((link) => (
-                      <MenuItem key={link.label}>
-                        {({ focus }) =>
-                          "href" in link ? (
-                            <Link
-                              href={link.href!}
-                              className={`${
-                                focus ? "bg-gray-500" : ""
-                              } block rounded-md px-4 py-2 text-sm text-dark`}
-                            >
-                              {link.label}
-                            </Link>
-                          ) : (
-                            <div
-                              onClick={link.onClick}
-                              className={`${
-                                focus ? "bg-gray-500" : ""
-                              } block rounded-md px-4 py-2 text-sm text-dark cursor-pointer`}
-                            >
-                              {link.label}
-                            </div>
-                          )
-                        }
-                      </MenuItem>
-                    ))}
-                  </MenuItems>
-                </Transition>
-              </Menu>
-            )}
-            <div className="pt-4 border-t">
-              {isLoggedIn && user ? (
-                <>
-                  <div className="flex items-center px-3 py-2">
-                    <div className="flex-shrink-0 bg-gray-100 p-2 rounded-full">
-                      <FontAwesomeIcon icon={faUser} className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium">
-                        {user.first_name} {user.last_name}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-1 space-y-1">
-                    {userDropdownItems.map((item) => (
-                      <div
-                        key={item.label}
-                        onClick={() => {
-                          item.onClick?.();
-                          setMobileMenuOpen(false);
-                        }}
-                        className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
-                      >
-                        {item.label}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="flex gap-2 px-3">
-                  <Link
-                    href="/auth/login"
-                    className="flex-1 text-center px-4 py-2 text-sm border rounded-md"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="flex-1 text-center px-4 py-2 text-sm text-white bg-indigo-600 rounded-md"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Register
-                  </Link>
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex md:space-x-6">
+              {pathname === "/" && (
+                <div className="flex flex-row">
+                  {homepageNavLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="text-sm font-medium text-black hover:text-indigo-200 px-3 py-2 rounded-md"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
               )}
+
+              {isLoggedIn && user ? (
+                <>
+                  <Menu as="div" className="relative ml-3">
+                    <MenuButton className="flex items-center">
+                      <span className="sr-only">Open user menu</span>
+
+                      <img
+                        src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
+                          user.first_name
+                        )}+${encodeURIComponent(
+                          user.last_name
+                        )}&size=250&background=e0e7ff&color=4f46e5`}
+                        alt="User avatar"
+                        className="w-8 h-8 rounded-full border border-gray-300"
+                      />
+
+                      <div className="flex flex-row space-x-1 mx-2">
+                        <span className="text-sm font-medium text-gray-700 hidden lg:block">
+                          {user.first_name}
+                        </span>
+                        <span className="text-sm font-medium text-gray-700 hidden lg:block">
+                          {user.last_name}
+                        </span>
+                      </div>
+
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        className="h-4 w-4 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </MenuButton>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <MenuItems className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg">
+                        <div className="py-1">
+                          {/* <div className="px-4 py-2 border-b border-gray-500 hover:bg-gray-500">
+                            <p className="text-sm font-medium text-black truncate">
+                              <Link
+                                href={`/feedback`}
+                                className={`block text-sm py-1`}
+                              >
+                                Give Feedback
+                              </Link>
+                            </p>
+                          </div> */}
+                          {/* Use userDropdownItems from props */}
+                          {userDropdownItems.map((item) => (
+                            <MenuItem key={item.label}>
+                              {({ focus }) =>
+                                item.href ? (
+                                  <Link
+                                    href={item.href}
+                                    onClick={
+                                      item.label === "Logout"
+                                        ? handleLogout
+                                        : item.onClick
+                                    }
+                                    className={`${
+                                      focus
+                                        ? "bg-gray-500 text-black"
+                                        : "text-gray-700"
+                                    } block px-4 py-2 text-sm`}
+                                  >
+                                    {item.label}
+                                  </Link>
+                                ) : (
+                                  <button
+                                    onClick={
+                                      item.label === "Logout"
+                                        ? handleLogout
+                                        : item.onClick
+                                    }
+                                    className={`${
+                                      focus
+                                        ? "bg-gray-500 text-black"
+                                        : "text-gray-700"
+                                    } block w-full px-4 py-2 text-sm text-left`}
+                                  >
+                                    {item.label}
+                                  </button>
+                                )
+                              }
+                            </MenuItem>
+                          ))}
+                        </div>
+                      </MenuItems>
+                    </Transition>
+                  </Menu>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center space-x-3">
+                    <Link
+                      href="/auth/login"
+                      className="text-sm font-medium text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/auth/register"
+                      className="px-4 py-1.5 text-sm font-medium rounded-md text-white bg-indigo-200 hover:bg-indigo-700 "
+                    >
+                      Register
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-md text-gray-500 hover:text-black"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-sidebar"
+              >
+                <span className="sr-only">Open menu</span>
+                <FontAwesomeIcon
+                  icon={mobileMenuOpen ? faX : faBars}
+                  className="h-6 w-6 text-gray-300"
+                  aria-hidden="true"
+                />
+              </button>
             </div>
           </div>
         </div>
+      </nav>
+
+      {/* Mobile Sidebar Section - Use props */}
+      <Transition show={mobileMenuOpen} as={Fragment}>
+        <Dialog
+          onClose={() => setMobileMenuOpen(false)}
+          className="relative z-40 md:hidden"
+        >
+          <TransitionChild
+            as={Fragment}
+            enter="transition ease-in-out duration-300 transform"
+            enterFrom="-translate-x-full"
+            enterTo="translate-x-0"
+            leave="transition ease-in-out duration-300 transform"
+            leaveFrom="translate-x-0"
+            leaveTo="-translate-x-full"
+          >
+            <DialogPanel
+              id="mobile-sidebar"
+              className="fixed inset-y-0 left-0 w-full bg-white"
+            >
+              <Sidebar
+                isMobile={true}
+                onClose={() => setMobileMenuOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
+                handleLogout={handleLogout}
+                userDropdownItems={userDropdownItems}
+                loginUrl="/auth/login"
+                registerUrl="/auth/register"
+                currentPath={pathname}
+                homepageLinks={homepageNavLinks}
+              />
+            </DialogPanel>
+          </TransitionChild>
+        </Dialog>
       </Transition>
-    </nav>
+    </>
   );
 };
 

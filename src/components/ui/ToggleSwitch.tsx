@@ -10,12 +10,12 @@ interface ToggleSwitchProps {
   className?: string;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+const ToggleSwitch = ({
   options,
   activeTab,
   setActiveTab,
   className = "",
-}) => {
+}: ToggleSwitchProps) => {
   return (
     <div
       className={`inline-flex bg-gray-400 rounded-lg p-0.5 space-x-1 mb-6 ${className}`}

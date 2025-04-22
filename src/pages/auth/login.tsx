@@ -229,9 +229,12 @@ export default function LoginPage() {
           {/* Form Container */}
           <div className="flex-grow flex items-center justify-center p-4">
             <div className="w-full max-w-md">
-              <form onSubmit={handleLogin} className="w-full space-y-5">
-                <h2 className="text-3xl font-semibold mb-8 text-gray-800">
+              <form onSubmit={handleLogin} className="w-full">
+                <p className="flex flex-row mx-auto justify-center text-sm text-gray-200 mb-1">
                   Enter your credentials
+                </p>
+                <h2 className="flex flex-row mx-auto justify-center text-lg font-semibold mb-12">
+                  Log into Guwahati Jobs
                 </h2>
                 {error && (
                   <p className="text-red-500 text-sm text-center -mt-3 mb-4">
@@ -239,7 +242,7 @@ export default function LoginPage() {
                   </p>
                 )}
 
-                <div>
+                <div className="flex flex-col space-y-4">
                   <TextField
                     label="Your email"
                     type="email"
@@ -249,8 +252,6 @@ export default function LoginPage() {
                     isRequired
                     name="email"
                   />
-                </div>
-                <div>
                   <TextField
                     label="Password"
                     type="password"
@@ -259,8 +260,6 @@ export default function LoginPage() {
                     placeholder="Enter your password"
                     isRequired
                   />
-                </div>
-                <div className="flex flex-col mx-auto">
                   <Button
                     text={isLoading ? "Logging in..." : "Login"}
                     style="primary"
