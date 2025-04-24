@@ -57,7 +57,7 @@ const Navbar = ({
 
   if (loading) {
     return (
-      <nav className="bg-white shadow-xs w-full top-0 left-0 z-20 relative">
+      <nav className="bg-white shadow-xs w-full fixed top-0 left-0 z-50 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="animate-pulse bg-gray-200 h-8 w-32 rounded" />
@@ -70,7 +70,7 @@ const Navbar = ({
 
   return (
     <>
-      <nav className="bg-white shadow-xs w-full top-0 left-0 z-20 relative">
+      <nav className="bg-white shadow-xs w-full fixed top-0 left-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo/Brand */}
@@ -78,7 +78,7 @@ const Navbar = ({
               <Link href="/" className="flex items-center space-x-2">
                 <Image
                   src="/images/logo.png"
-                  alt="Guwahati-Jobs.in Logo"
+                  alt="Logo"
                   width={200}
                   height={40}
                   className="h-10 w-auto"

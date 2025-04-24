@@ -93,7 +93,9 @@ const Sidebar = ({
   return (
     <aside
       className={`w-64 bg-white p-4 ${
-        isMobile ? "h-full flex flex-col w-full" : "min-h-screen"
+        isMobile
+          ? "h-full flex flex-col w-full"
+          : "fixed h-[calc(100vh-4rem)] top-16 left-0 z-50"
       }`}
     >
       {isMobile && (

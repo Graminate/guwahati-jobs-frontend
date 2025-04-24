@@ -5,7 +5,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useRef, useEffect } from "react";
-import Button from "../ui/Button"; // Assuming Button component exists
+import Button from "../ui/Button";
+import TextField from "../ui/TextField";
 
 type FilterType =
   | "Language"
@@ -17,14 +18,13 @@ type FilterType =
   | "Minimum Salary"
   | "Benefits";
 
-// Define preference types - adjust or make distinct from FilterType if needed
 type PreferenceType =
   | "Company Size"
   | "Funding Stage"
   | "Team Size"
   | "Remote Policy"
   | "Values"
-  | "Tools & Skills"; // Example preferences
+  | "Tools & Skills";
 
 const allFilters: FilterType[] = [
   "Language",
@@ -47,6 +47,7 @@ const allPreferences: PreferenceType[] = [
 ];
 
 const JobAlertCard = () => {
+  const [jobTitle, setJobTitle] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] =
@@ -78,24 +79,22 @@ const JobAlertCard = () => {
 
   const toggleFilterDropdown = () => {
     setIsFilterDropdownOpen((prev) => !prev);
-    setIsPreferenceDropdownOpen(false); // Close other dropdown
+    setIsPreferenceDropdownOpen(false);
   };
 
   const togglePreferenceDropdown = () => {
     setIsPreferenceDropdownOpen((prev) => !prev);
-    setIsFilterDropdownOpen(false); // Close other dropdown
+    setIsFilterDropdownOpen(false);
   };
 
   const handleAddFilter = (filter: FilterType) => {
     console.log("Add filter:", filter);
     setIsFilterDropdownOpen(false);
-    // TODO: Add filter logic
   };
 
   const handleAddPreference = (preference: PreferenceType) => {
     console.log("Add preference:", preference);
     setIsPreferenceDropdownOpen(false);
-    // TODO: Add preference logic
   };
 
   useEffect(() => {
@@ -174,46 +173,19 @@ const JobAlertCard = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <input
+                  <TextField
+                    label="Job Title"
                     type="text"
-                    id="jobTitle"
+                    value={jobTitle}
+                    onChange={(value: string) => setJobTitle(value)}
+                    placeholder="name@example.com"
+                    isRequired
                     name="jobTitle"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    placeholder="Enter job title"
+                    helperText="e.g. product manager, graphic designer, frontend
+                    developer"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    For example, product manager, graphic designer, frontend
-                    developer
-                  </p>
                 </div>
-                <div>
-                  <label
-                    htmlFor="location"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Location <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="location"
-                    name="location"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select
-                    </option>
-                    <option value="berlin">Berlin, Germany</option>
-                    <option value="munich">Munich, Germany</option>
-                    <option value="hamburg">Hamburg, Germany</option>
-                    <option value="remote_de">Remote (Germany)</option>
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Include up to three locations. You can select countries,
-                    cities, or both.
-                  </p>
-                </div>
+                <div>{/* Location search bar */}</div>
               </div>
 
               <div
@@ -233,7 +205,7 @@ const JobAlertCard = () => {
                     Add filters
                     <FontAwesomeIcon
                       icon={faChevronDown}
-                      className="size-4 text-gray-500"
+                      className="size-4 text-gray-200"
                     />
                   </button>
                 </div>
@@ -252,13 +224,13 @@ const JobAlertCard = () => {
                           key={filter}
                           type="button"
                           onClick={() => handleAddFilter(filter)}
-                          className="w-full text-left text-gray-700 flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+                          className="w-full text-left text-gray-700 flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-500 hover:text-gray-900"
                           role="menuitem"
                           tabIndex={-1}
                         >
                           <FontAwesomeIcon
                             icon={faPlus}
-                            className="size-3 text-gray-500"
+                            className="size-3 text-gray-200"
                           />
                           {filter}
                         </button>
@@ -295,7 +267,7 @@ const JobAlertCard = () => {
                     Add preferences
                     <FontAwesomeIcon
                       icon={faChevronDown}
-                      className="size-4 text-gray-500"
+                      className="size-4 text-gray-200"
                     />
                   </button>
                 </div>
@@ -314,13 +286,13 @@ const JobAlertCard = () => {
                           key={preference}
                           type="button"
                           onClick={() => handleAddPreference(preference)}
-                          className="w-full text-left text-gray-700 flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+                          className="w-full text-left text-gray-700 flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-500 hover:text-gray-900"
                           role="menuitem"
                           tabIndex={-1}
                         >
                           <FontAwesomeIcon
                             icon={faPlus}
-                            className="size-3 text-gray-500"
+                            className="size-3 text-gray-200"
                           />
                           {preference}
                         </button>

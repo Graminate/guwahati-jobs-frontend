@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import JobPostingHero from "./JobPostingHero";
 import { useAuth } from "@/context/AuthContext";
+import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   const { isLoggedIn, isLoadingAuth } = useAuth();
@@ -77,10 +78,7 @@ export default function Home() {
                 </div>
                 {/* Feature 3 */}
                 <div className="p-6">
-                  {/* Placeholder for Icon */}
-                  <div className="text-blue-600 mb-4 text-4xl flex justify-center">
-                    {/* <FaRocket /> */}🚀
-                  </div>
+                  <div className="text-blue-600 mb-4 text-4xl flex justify-center"></div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">
                     Hire faster
                   </h3>
@@ -195,6 +193,7 @@ export default function Home() {
           </section>
         </main>
       </DefaultLayout>
+      <Footer />
     </>
   );
 }

@@ -1,11 +1,11 @@
 import React from "react";
 import Link from "next/link";
 
-const Footer: React.FC = () => {
+const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-500 text-gray-700  pt-12 pb-8">
+    <footer className=" text-gray-700 pt-12 pb-8 relative z-60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Column 1: Brand and Social */}

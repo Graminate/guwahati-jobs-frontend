@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Sidebar from "@/components/layout/Sidebar";
 
 type HomepageLink = {
@@ -177,14 +176,14 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen justify-center items-center bg-gray-50">
+      <div className="flex flex-col justify-center items-center bg-gray-50">
         <p className="text-gray-600">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col">
       <Navbar
         isLoggedIn={isLoggedIn}
         user={user}
@@ -195,7 +194,7 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
       />
       <div className="flex flex-1 w-full mx-auto">
         {!noSidebar && (
-          <div className="hidden md:block flex-shrink-0 w-64">
+          <div className="hidden md:block flex-shrink-0 w-0">
             <Sidebar
               isMobile={false}
               isLoggedIn={isLoggedIn}
@@ -206,11 +205,15 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
           </div>
         )}
 
-        <main className={`flex-1 py-6 ${!noSidebar ? "md:pl-6" : ""}`}>
+        <main
+          className={`flex-1 pt-16 ${
+            !noSidebar ? "md:ml-64 md:pl-6" : ""
+          }`}
+        >
           {children}
         </main>
       </div>
-      <Footer />
+
     </div>
   );
 };
