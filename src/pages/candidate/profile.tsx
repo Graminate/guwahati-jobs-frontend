@@ -26,6 +26,13 @@ type User = {
   phone_number: string | null;
   created_at: string;
   updated_at: string;
+  profile_picture?: string;
+  region?: string;
+  cv?: string;
+  linkedin?: string;
+  github?: string;
+  behance?: string;
+  portfolio?: string;
 };
 
 const Profile = () => {
@@ -42,6 +49,16 @@ const Profile = () => {
     last_name: "",
     phoneCountryCode: "",
     phoneNumber: "",
+    profile_picture: "",
+    region: "",
+    cv: "",
+  });
+
+  const [linksFormData, setLinksFormData] = useState({
+    linkedin: "",
+    github: "",
+    behance: "",
+    portfolio: "",
   });
 
   useEffect(() => {
@@ -81,6 +98,16 @@ const Profile = () => {
           last_name: data.last_name,
           phoneCountryCode: phoneParts[0] || "+49",
           phoneNumber: phoneParts.slice(1).join(" ") || "",
+          profile_picture: data.profile_picture || "",
+          region: data.region || "",
+          cv: data.cv || "",
+        });
+
+        setLinksFormData({
+          linkedin: data.linkedin || "",
+          github: data.github || "",
+          behance: data.behance || "",
+          portfolio: data.portfolio || "",
         });
       } catch (err: any) {
         console.error("Error fetching user data:", err);
@@ -105,6 +132,9 @@ const Profile = () => {
         last_name: userData.last_name,
         phoneCountryCode: phoneParts[0] || "+49",
         phoneNumber: phoneParts.slice(1).join(" ") || "",
+        profile_picture: userData.profile_picture || "",
+        region: userData.region || "",
+        cv: userData.cv || "",
       });
     }
   };
@@ -133,6 +163,9 @@ const Profile = () => {
             last_name: formData.last_name,
             phone_number:
               `${formData.phoneCountryCode} ${formData.phoneNumber}`.trim(),
+            profile_picture: formData.profile_picture || null,
+            region: formData.region || null,
+            cv: formData.cv || null,
           }),
         }
       );
@@ -147,6 +180,41 @@ const Profile = () => {
     } catch (err: any) {
       console.error("Error updating user:", err);
       setError(err.message || "Failed to update profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveLinks = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `http://localhost:3000/users/${authUser?.userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            linkedin: linksFormData.linkedin || null,
+            github: linksFormData.github || null,
+            behance: linksFormData.behance || null,
+            portfolio: linksFormData.portfolio || null,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to update user: ${response.statusText}`);
+      }
+
+      const updatedUser = await response.json();
+      setUserData(updatedUser);
+      setIsEditingLinks(false);
+    } catch (err: any) {
+      console.error("Error updating links:", err);
+      setError(err.message || "Failed to update professional links");
     } finally {
       setIsLoading(false);
     }
@@ -207,25 +275,51 @@ const Profile = () => {
                       Update Profile
                     </h2>
                     <div className="mb-5">
-                      <div className="relative w-20 h-20 inline-block">
+                      <div className="relative flex flex-col items-center my-2 w-20 h-20">
                         <img
-                          src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
-                            userData?.first_name || "N"
-                          )}+${encodeURIComponent(
-                            userData?.last_name || "A"
-                          )}&size=250&background=e0e7ff&color=4f46e5`}
+                          src={
+                            formData.profile_picture ||
+                            `https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
+                              userData?.first_name || "N"
+                            )}+${encodeURIComponent(
+                              userData?.last_name || "A"
+                            )}&size=250&background=e0e7ff&color=4f46e5`
+                          }
                           alt="Profile"
                           className="w-20 h-20 rounded-full mr-3 border border-indigo-200 flex-shrink-0"
                         />
-                        <div className="absolute bottom-1 -right-1 bg-indigo-200 hover:bg-indigo-100 text-white rounded-full p-1 cursor-pointer">
-                          <FontAwesomeIcon icon={faTrash} className="w-6 h-4" />
-                        </div>
                       </div>
+                      <input
+                        id="profile-picture-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0];
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              if (event.target?.result) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  profile_picture: event.target
+                                    ?.result as string,
+                                }));
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
                       <Button
                         text="Update"
                         style="ghost"
                         type="button"
-                        onClick={() => {}}
+                        onClick={() =>
+                          document
+                            .getElementById("profile-picture-upload")
+                            ?.click()
+                        }
                       />
                     </div>
                     <div className="space-y-4">
@@ -257,8 +351,8 @@ const Profile = () => {
                               } as React.ChangeEvent<HTMLInputElement>)
                             }
                             placeholder="John"
-                            isRequired
                             name="first_name"
+                            isDisabled={true}
                           />
                         </div>
 
@@ -273,8 +367,8 @@ const Profile = () => {
                               } as React.ChangeEvent<HTMLInputElement>)
                             }
                             placeholder="Doe"
-                            isRequired
                             name="last_name"
+                            isDisabled={true}
                           />
                         </div>
                       </div>
@@ -292,6 +386,20 @@ const Profile = () => {
                           }
                           placeholder="Enter your phone number"
                           width="large"
+                        />
+                      </div>
+
+                      <div>
+                        <TextField
+                          label="Region"
+                          type="text"
+                          value={formData.region}
+                          onChange={(value) =>
+                            handleChange({
+                              target: { name: "region", value },
+                            } as React.ChangeEvent<HTMLInputElement>)
+                          }
+                          placeholder="Enter your region"
                         />
                       </div>
                     </div>
@@ -324,27 +432,40 @@ const Profile = () => {
                       <div className="flex flex-col text-center gap-2">
                         <div className="relative w-20 h-20 inline-block">
                           <img
-                            src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
-                              userData?.first_name || "N"
-                            )}+${encodeURIComponent(
-                              userData?.last_name || "A"
-                            )}&size=250&background=e0e7ff&color=4f46e5`}
+                            src={
+                              userData?.profile_picture ||
+                              `https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
+                                userData?.first_name || "N"
+                              )}+${encodeURIComponent(
+                                userData?.last_name || "A"
+                              )}&size=250&background=e0e7ff&color=4f46e5`
+                            }
                             alt="Profile"
                             className="w-20 h-20 rounded-full mr-3 border border-indigo-200 flex-shrink-0"
                           />
-
-                          <div className="absolute bottom-1 -right-1 bg-indigo-200 hover:bg-indigo-100 text-white rounded-full p-1 cursor-pointer">
-                            <FontAwesomeIcon
-                              icon={faTrash}
-                              className="w-6 h-4"
-                            />
-                          </div>
                         </div>
+                        <input
+                          id="profile-picture-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              const file = e.target.files[0];
+                              console.log("Selected profile picture:", file);
+                              // Handle file upload here
+                            }
+                          }}
+                        />
                         <Button
                           text="Update"
                           style="ghost"
                           type="button"
-                          onClick={() => {}}
+                          onClick={() =>
+                            document
+                              .getElementById("profile-picture-upload")
+                              ?.click()
+                          }
                         />
                       </div>
 
@@ -353,13 +474,15 @@ const Profile = () => {
                           {userData?.first_name} {userData?.last_name}
                         </h3>
                         <div className="space-y-2 text-gray-600">
-                          <div className="flex items-center justify-center sm:justify-start">
-                            <FontAwesomeIcon
-                              icon={faMapMarkedAlt}
-                              className="mr-2 text-gray-400"
-                            />
-                            {/* <span>{formData.region}</span> */}
-                          </div>
+                          {userData?.region && (
+                            <div className="flex items-center justify-center sm:justify-start">
+                              <FontAwesomeIcon
+                                icon={faMapMarkedAlt}
+                                className="mr-2 text-gray-400"
+                              />
+                              <span>{userData.region}</span>
+                            </div>
+                          )}
                           <div className="flex items-center justify-center sm:justify-start">
                             <FontAwesomeIcon
                               icon={faEnvelope}
@@ -394,7 +517,7 @@ const Profile = () => {
                   </div>
                 )}
 
-                {/* Keep existing CV section */}
+                {/* Add CV section here */}
                 <div className="bg-white rounded-lg shadow p-6">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4">
                     CV
@@ -404,24 +527,89 @@ const Profile = () => {
                     applications. Of course, you will always have the option to
                     upload another CV during each application process.
                   </p>
-                  <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-between bg-gray-50">
-                    <div className="flex items-center space-x-3">
-                      <FontAwesomeIcon
-                        icon={faPaperclip}
-                        className="h-10 w-10"
-                      />
-                      <div>
-                        <span className="font-medium text-gray-800">CV</span>
-                        <p className="text-xs">.doc, .docx, .pdf, .rtf, .txt</p>
+
+                  {userData?.cv ? (
+                    <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-between bg-gray-50">
+                      <div className="flex items-center space-x-3">
+                        <FontAwesomeIcon
+                          icon={faPaperclip}
+                          className="h-10 w-10 text-gray-400"
+                        />
+                        <div>
+                          <a
+                            href={userData.cv}
+                            className="font-medium text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View CV
+                          </a>
+                          <p className="text-xs">
+                            .doc, .docx, .pdf, .rtf, .txt
+                          </p>
+                        </div>
                       </div>
+                      <button
+                        onClick={() =>
+                          document.getElementById("cv-upload")?.click()
+                        }
+                        className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-400"
+                      >
+                        Replace file
+                      </button>
+                      <input
+                        id="cv-upload"
+                        type="file"
+                        accept=".doc,.docx,.pdf,.rtf,.txt"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            // Handle file upload here
+                            const file = e.target.files[0];
+                            console.log("Selected file:", file);
+                            // You would typically upload this to your backend here
+                          }
+                        }}
+                      />
                     </div>
-                    <button
-                      onClick={() => console.log("Select file clicked")}
-                      className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                      Select file
-                    </button>
-                  </div>
+                  ) : (
+                    <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-between bg-gray-50">
+                      <div className="flex items-center space-x-3">
+                        <FontAwesomeIcon
+                          icon={faPaperclip}
+                          className="h-10 w-10"
+                        />
+                        <div>
+                          <span className="font-medium text-gray-800">CV</span>
+                          <p className="text-xs">
+                            .doc, .docx, .pdf, .rtf, .txt
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          document.getElementById("cv-upload")?.click()
+                        }
+                        className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-400"
+                      >
+                        Select file
+                      </button>
+                      <input
+                        id="cv-upload"
+                        type="file"
+                        accept=".doc,.docx,.pdf,.rtf,.txt"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            // Handle file upload here
+                            const file = e.target.files[0];
+                            console.log("Selected file:", file);
+                            // You would typically upload this to your backend here
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Professional Links section */}
@@ -442,55 +630,75 @@ const Profile = () => {
                       <div>
                         <p className="text-gray-600 mb-1">
                           LinkedIn
-                          <span className=" text-xs bg-gray-400 px-2 py-1 rounded-full">
+                          <span className="text-xs bg-gray-400 px-2 py-1 rounded-full ml-2">
                             Optional
                           </span>
                         </p>
                         <TextField
-                          value=""
-                          onChange={() => {}}
+                          value={linksFormData.linkedin}
+                          onChange={(value) =>
+                            setLinksFormData((prev) => ({
+                              ...prev,
+                              linkedin: value,
+                            }))
+                          }
                           placeholder="Enter LinkedIn URL"
                         />
                       </div>
 
-                      <div className="pt-4">
+                      <div>
                         <p className="text-gray-600 mb-1">
                           GitHub
-                          <span className=" text-xs bg-gray-400 px-2 py-1 rounded-full">
+                          <span className="text-xs bg-gray-400 px-2 py-1 rounded-full ml-2">
                             Optional
                           </span>
                         </p>
                         <TextField
-                          value=""
-                          onChange={() => {}}
+                          value={linksFormData.github}
+                          onChange={(value) =>
+                            setLinksFormData((prev) => ({
+                              ...prev,
+                              github: value,
+                            }))
+                          }
                           placeholder="Enter GitHub URL"
                         />
                       </div>
 
-                      <div className="pt-4">
+                      <div>
                         <p className="text-gray-600 mb-1">
                           Behance
-                          <span className=" text-xs bg-gray-400 px-2 py-1 rounded-full">
+                          <span className="text-xs bg-gray-400 px-2 py-1 rounded-full ml-2">
                             Optional
                           </span>
                         </p>
                         <TextField
-                          value=""
-                          onChange={() => {}}
+                          value={linksFormData.behance}
+                          onChange={(value) =>
+                            setLinksFormData((prev) => ({
+                              ...prev,
+                              behance: value,
+                            }))
+                          }
                           placeholder="Enter Behance URL"
                         />
                       </div>
 
-                      <div className=" pt-4">
+                      <div>
                         <p className="text-gray-600 mb-1">
                           Portfolio
-                          <span className=" text-xs bg-gray-400 px-2 py-1 rounded-full">
+                          <span className="text-xs bg-gray-400 px-2 py-1 rounded-full ml-2">
                             Optional
                           </span>
                         </p>
                         <TextField
-                          value=""
-                          onChange={() => {}}
+                          value={linksFormData.portfolio}
+                          onChange={(value) =>
+                            setLinksFormData((prev) => ({
+                              ...prev,
+                              portfolio: value,
+                            }))
+                          }
                           placeholder="Enter Portfolio URL"
                         />
                       </div>
@@ -505,47 +713,76 @@ const Profile = () => {
                         <Button
                           style="primary"
                           text="Save changes"
-                          onClick={() => setIsEditingLinks(false)}
+                          onClick={handleSaveLinks}
                         />
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div>
-                        <p className="text-gray-600">LinkedIn</p>
-                        <a
-                          href="https://www.linkedin.com/in/borneelphukan/"
-                          className="text-blue-600 hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          https://www.linkedin.com/in/borneelphukan/
-                        </a>
-                      </div>
+                      {userData?.linkedin && (
+                        <div>
+                          <p className="text-gray-600">LinkedIn</p>
+                          <a
+                            href={userData.linkedin}
+                            className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {userData.linkedin}
+                          </a>
+                        </div>
+                      )}
 
-                      <div>
-                        <p className="text-gray-600">GitHub</p>
-                        <a
-                          href="https://github.com/borneelphukan"
-                          className="text-blue-600 hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          https://github.com/borneelphukan
-                        </a>
-                      </div>
+                      {userData?.github && (
+                        <div>
+                          <p className="text-gray-600">GitHub</p>
+                          <a
+                            href={userData.github}
+                            className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {userData.github}
+                          </a>
+                        </div>
+                      )}
 
-                      <div>
-                        <p className="text-gray-600">Portfolio</p>
-                        <a
-                          href="https://borneelphukan.com/Portfolio"
-                          className="text-blue-600 hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          https://borneelphukan.com/Portfolio
-                        </a>
-                      </div>
+                      {userData?.behance && (
+                        <div>
+                          <p className="text-gray-600">Behance</p>
+                          <a
+                            href={userData.behance}
+                            className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {userData.behance}
+                          </a>
+                        </div>
+                      )}
+
+                      {userData?.portfolio && (
+                        <div>
+                          <p className="text-gray-600">Portfolio</p>
+                          <a
+                            href={userData.portfolio}
+                            className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {userData.portfolio}
+                          </a>
+                        </div>
+                      )}
+
+                      {!userData?.linkedin &&
+                        !userData?.github &&
+                        !userData?.behance &&
+                        !userData?.portfolio && (
+                          <p className="text-gray-400">
+                            No professional links provided
+                          </p>
+                        )}
                     </div>
                   )}
                 </div>
