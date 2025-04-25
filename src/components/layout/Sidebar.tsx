@@ -26,6 +26,11 @@ const candidateMenuItems: CandidateMenuItem[] = [
     label: "Jobs for you",
     href: "/candidate/job-recommendations",
   },
+  {
+    icon: faUser,
+    label: "Profile",
+    href: "/candidate/profile",
+  },
 
   { icon: faGear, label: "Settings", href: "/candidate/settings/account" },
 ];

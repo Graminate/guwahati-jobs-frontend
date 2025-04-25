@@ -18,7 +18,7 @@ type User = {
 type MessageBodyProps = {
   message: Message;
   onGoBack: () => void;
-  user: User | null;
+  user?: User;
 };
 
 const MessageBody = ({ message, onGoBack, user }: MessageBodyProps) => {
@@ -135,9 +135,9 @@ const MessageBody = ({ message, onGoBack, user }: MessageBodyProps) => {
           <div className="flex-shrink-0">
             <img
               src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
-                "First_Name"
+                `user.first_name`
               )}+${encodeURIComponent(
-                "Last_Name"
+                `user.last_name`
               )}&size=250&background=e0e7ff&color=4f46e5`}
               alt="Your avatar"
               className="w-10 h-10 rounded-full border border-gray-300"

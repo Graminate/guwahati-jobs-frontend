@@ -65,7 +65,7 @@ const MessagesPage = () => {
         <meta name="description" content="View your application messages" />
       </Head>
       <DefaultLayout>
-        <div className="flex md:h-screen h-full overflow-hidden bg-white ">
+        <div className="flex min-h-screen h-full overflow-hidden bg-white ">
           <div
             className={`
             ${isMessageSelected ? "hidden" : "block"}
@@ -91,7 +91,7 @@ const MessagesPage = () => {
               <MessageBody
                 message={selectedMessage}
                 onGoBack={handleGoBackToList}
-                user={null}
+                user={undefined}
               />
             ) : (
               <div className="hidden md:flex items-center justify-center h-full text-gray-500  bg-white">

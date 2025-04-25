@@ -74,7 +74,7 @@ const CandidateDashboard = () => {
         <title>Dashboard - Candidate</title>
       </Head>
       <DefaultLayout>
-        <div className="min-h-screen bg-gray-50/50 p-5">
+        <div className=" bg-gray-50/50 p-5">
           <div className="mx-auto">
             <h1 className="text-3xl font-bold text-black mb-6">Account</h1>
             <div className="flex flex-col gap-4">

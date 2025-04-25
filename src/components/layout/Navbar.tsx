@@ -108,7 +108,6 @@ const Navbar = ({
                   <Menu as="div" className="relative ml-3">
                     <MenuButton className="flex items-center">
                       <span className="sr-only">Open user menu</span>
-
                       <img
                         src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
                           user.first_name
@@ -120,10 +119,10 @@ const Navbar = ({
                       />
 
                       <div className="flex flex-row space-x-1 mx-2">
-                        <span className="text-sm font-medium text-gray-700 hidden lg:block">
+                        <span className="text-sm font-medium hidden lg:block">
                           {user.first_name}
                         </span>
-                        <span className="text-sm font-medium text-gray-700 hidden lg:block">
+                        <span className="text-sm font-medium hidden lg:block">
                           {user.last_name}
                         </span>
                       </div>
@@ -145,8 +144,8 @@ const Navbar = ({
                     >
                       <MenuItems className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg">
                         <div className="py-1">
-                          {/* <div className="px-4 py-2 border-b border-gray-500 hover:bg-gray-500">
-                            <p className="text-sm font-medium text-black truncate">
+                          <div className="px-4 py-2 border-b border-gray-500 hover:bg-gray-500">
+                            <p className="text-sm font-medium truncate">
                               <Link
                                 href={`/feedback`}
                                 className={`block text-sm py-1`}
@@ -154,7 +153,7 @@ const Navbar = ({
                                 Give Feedback
                               </Link>
                             </p>
-                          </div> */}
+                          </div>
                           {/* Use userDropdownItems from props */}
                           {userDropdownItems.map((item) => (
                             <MenuItem key={item.label}>
@@ -169,7 +168,7 @@ const Navbar = ({
                                     }
                                     className={`${
                                       focus
-                                        ? "bg-gray-500 text-black"
+                                        ? "bg-gray-500"
                                         : "text-gray-700"
                                     } block px-4 py-2 text-sm`}
                                   >

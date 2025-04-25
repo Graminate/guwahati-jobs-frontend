@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useRef, useEffect } from "react";
 import Button from "../ui/Button";
 import TextField from "../ui/TextField";
+import { useRouter } from "next/router";
 
 type FilterType =
   | "Language"
@@ -56,25 +57,43 @@ const JobAlertCard = () => {
   const [availablePreferences] = useState<PreferenceType[]>(allPreferences);
   const filterDropdownRef = useRef<HTMLDivElement>(null);
   const preferenceDropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const handleAddClick = () => {
-    setShowForm(true);
-    setIsFilterDropdownOpen(false);
-    setIsPreferenceDropdownOpen(false);
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, createAlert: "true" },
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const handleCancelClick = () => {
-    setShowForm(false);
-    setIsFilterDropdownOpen(false);
-    setIsPreferenceDropdownOpen(false);
+    const { createAlert, ...restQuery } = router.query;
+    router.push(
+      {
+        pathname: router.pathname,
+        query: restQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const handleSaveJobAlert = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Saving job alert...");
-    setShowForm(false);
-    setIsFilterDropdownOpen(false);
-    setIsPreferenceDropdownOpen(false);
+    const { createAlert, ...restQuery } = router.query;
+    router.push(
+      {
+        pathname: router.pathname,
+        query: restQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const toggleFilterDropdown = () => {
@@ -96,6 +115,10 @@ const JobAlertCard = () => {
     console.log("Add preference:", preference);
     setIsPreferenceDropdownOpen(false);
   };
+
+  useEffect(() => {
+    setShowForm(router.query.createAlert === "true");
+  }, [router.query.createAlert]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
