@@ -48,7 +48,6 @@ const decodeTokenAndGetUser = (token: string): User | null => {
       first_name: decoded.first_name,
       last_name: decoded.last_name,
       role: decoded.role,
-      // Map other fields if needed
     };
   } catch (error) {
     console.error("Token decoding failed:", error);
