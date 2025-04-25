@@ -1,27 +1,25 @@
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import MessageList, { Message } from "./messages/messageList";
 import MessageBody from "./messages/messageBody";
+import { useAuth } from "@/context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+
+type User = {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 const mockMessages: Message[] = [
   {
     id: 1,
-    senderName: "Charlotte Hagemann",
-    senderInitials: "CH",
-    senderAvatarUrl: undefined,
-    jobTitle: "Junior Full-Stack Developer - Graduates (f/m/x)",
-    timestamp: "12 days ago",
-    previewText:
-      "Hallo Borneel, vielen Dank für deine Bewerbung bei Pactos! Wir würden dich ger...",
-    fullText:
-      "Hallo Borneel,\n\nvielen Dank für deine Bewerbung bei Pactos!\n\nWir würden dich gerne besser kennenlernen und dich zu einem Gespräch mit einem unserer Gründer - Antonio - einladen. Buche dir gerne einen Slot unter https://calendly.com/antonio-zill.\n\nWir freuen uns auf dich!\n\nLiebe Grüße,\nCharlotte",
-    companyName: "Pactos",
-    companyLogoUrl: "/images/pactos-logo.png",
-    jobLink: "https://example.com/job/123",
-  },
-  {
-    id: 2,
     senderName: "John Doe",
     senderInitials: "JD",
     senderAvatarUrl: "/images/user-avatar.png",
@@ -42,6 +40,46 @@ const MessagesPage = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
     null
   );
+  const [userData, setUserData] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user: authUser, isLoggedIn, isLoadingAuth } = useAuth();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setIsLoading(true);
+
+      if (isLoadingAuth) return;
+
+      if (!isLoggedIn || !authUser) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:3000/users/${authUser.userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch user data: ${response.statusText}`);
+        }
+
+        const data: User = await response.json();
+        setUserData(data);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [isLoggedIn, authUser, isLoadingAuth]);
 
   const selectedMessage = useMemo(() => {
     if (selectedMessageId === null) return null;
@@ -58,6 +96,17 @@ const MessagesPage = () => {
 
   const isMessageSelected = selectedMessageId !== null;
 
+  if (isLoading || isLoadingAuth) {
+    return (
+      <DefaultLayout>
+        <div className="flex justify-center items-center min-h-screen">
+          <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+          <span className="ml-4 text-xl">Loading Messages...</span>
+        </div>
+      </DefaultLayout>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -65,7 +114,7 @@ const MessagesPage = () => {
         <meta name="description" content="View your application messages" />
       </Head>
       <DefaultLayout>
-        <div className="flex min-h-screen h-full overflow-hidden bg-white ">
+        <div className="flex min-h-screen h-full overflow-hidden bg-white">
           <div
             className={`
             ${isMessageSelected ? "hidden" : "block"}
@@ -91,11 +140,16 @@ const MessagesPage = () => {
               <MessageBody
                 message={selectedMessage}
                 onGoBack={handleGoBackToList}
-                user={undefined}
+                user={userData || undefined}
               />
             ) : (
-              <div className="hidden md:flex items-center justify-center h-full text-gray-500  bg-white">
-                {/* Nothing here */}
+              <div className="hidden md:flex items-center justify-center h-full text-gray-500 bg-white">
+                <div className="text-center">
+                  <p className="text-lg">No message selected</p>
+                  <p className="text-sm mt-2">
+                    Select a message from the list to view it here
+                  </p>
+                </div>
               </div>
             )}
           </div>

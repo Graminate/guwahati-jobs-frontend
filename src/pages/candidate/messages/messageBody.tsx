@@ -85,10 +85,10 @@ const MessageBody = ({ message, onGoBack, user }: MessageBodyProps) => {
             />
           )}
           <button
-            className="p-1.5 border border-gray-300 rounded-md hover:bg-gray-100"
+            className="p-1.5 border border-gray-300 rounded-md hover:bg-gray-500"
             aria-label="Flag message"
           >
-            <FontAwesomeIcon icon={faFlag} className="size-4 text-gray-500" />
+            <FontAwesomeIcon icon={faFlag} className="size-4 text-yellow-200" />
           </button>
         </div>
 
@@ -120,7 +120,7 @@ const MessageBody = ({ message, onGoBack, user }: MessageBodyProps) => {
               <h3 className="font-semibold text-gray-800">
                 {message.senderName}
               </h3>
-              <span className="text-xs text-gray-500">{message.timestamp}</span>
+              <span className="text-xs">{message.timestamp}</span>
             </div>
 
             <p className="text-sm text-gray-700 whitespace-pre-wrap">
@@ -135,9 +135,9 @@ const MessageBody = ({ message, onGoBack, user }: MessageBodyProps) => {
           <div className="flex-shrink-0">
             <img
               src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
-                `user.first_name`
+                user?.first_name || "U"
               )}+${encodeURIComponent(
-                `user.last_name`
+                user?.last_name || "N"
               )}&size=250&background=e0e7ff&color=4f46e5`}
               alt="Your avatar"
               className="w-10 h-10 rounded-full border border-gray-300"

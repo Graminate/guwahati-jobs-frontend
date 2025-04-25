@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCheckCircle, faX } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
 
-const decodeToken = (token: string): { role: string; exp: number } | null => {
+const decodeToken = (token: string): { exp: number } | null => {
   try {
-    const decoded = jwtDecode<{ role: string; exp: number }>(token);
+    const decoded = jwtDecode<{ exp: number }>(token);
     if (decoded.exp * 1000 < Date.now()) {
       console.warn("Token expired client-side");
       return null;
@@ -37,9 +37,7 @@ export default function LoginPage() {
     if (token) {
       const decoded = decodeToken(token);
       if (decoded) {
-        const redirectPath =
-          decoded.role === "employer" ? "/dashboard/employer" : "/candidate";
-        router.replace(redirectPath);
+        router.replace("/candidate"); // Simplified redirect to candidate dashboard
       } else {
         localStorage.removeItem("token");
         setIsCheckingAuth(false);
@@ -61,20 +59,7 @@ export default function LoginPage() {
       });
 
       localStorage.setItem("token", response.data.token);
-      const decoded = decodeToken(response.data.token);
-      let redirectPath = "/";
-      if (decoded) {
-        redirectPath =
-          decoded.role === "employer" ? "/dashboard/employer" : "/candidate";
-      } else {
-        console.error("Failed to decode new token for redirect.");
-        redirectPath =
-          response.data.user?.role === "employer"
-            ? "/dashboard/employer"
-            : "/candidate";
-      }
-
-      router.push(redirectPath);
+      router.push("/candidate"); // Always redirect to candidate dashboard after login
     } catch (err: any) {
       console.error("Login error:", err);
 
@@ -199,9 +184,7 @@ export default function LoginPage() {
 
             {/* Registration Link (Top Right) */}
             <div className="hidden md:block text-sm">
-              <span className="text-gray-600 mr-2">
-                No candidate login yet?
-              </span>
+              <span className="text-gray-600 mr-2">No account yet?</span>
               <Link href="/auth/register" legacyBehavior>
                 <a className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-400 font-medium">
                   Registration
@@ -252,7 +235,7 @@ export default function LoginPage() {
                   />
                 </div>
                 <p className="text-sm text-center mt-4 lg:hidden">
-                  No candidate login yet ?{" "}
+                  No account yet?{" "}
                   <Link href="/auth/register" legacyBehavior>
                     <a className="text-blue-600 hover:underline">
                       Registration

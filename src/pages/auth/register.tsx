@@ -15,11 +15,10 @@ export default function RegisterPage() {
     password: "",
     first_name: "",
     last_name: "",
-    role: "employee", // Default role
-    phone_number: "", // Add phone_number state
+    phone_number: "",
   });
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isLoading, setIsLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleChange = (
@@ -28,7 +27,6 @@ export default function RegisterPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Adapter for TextField onChange which passes value directly
   const handleTextFieldChange = (name: string, value: string) => {
     setForm({ ...form, [name]: value });
   };
@@ -37,17 +35,15 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    
+
     console.log("Data being sent to API:", form);
 
-    // Basic validation checks
     if (form.password.length < 8) {
       setError("Password must be at least 8 characters long.");
       setIsLoading(false);
       return;
     }
 
-    // Phone number validation (if provided)
     if (form.phone_number && !/^\+?[\d\s-]{10,}$/.test(form.phone_number)) {
       setError("Please enter a valid phone number (at least 10 digits)");
       setIsLoading(false);
@@ -55,13 +51,11 @@ export default function RegisterPage() {
     }
 
     try {
-      // Prepare payload with null handling for phone number
       const payload = {
         email: form.email.trim(),
         password: form.password,
         first_name: form.first_name.trim(),
         last_name: form.last_name.trim(),
-        role: form.role,
         phone_number: form.phone_number ? form.phone_number.trim() : null,
       };
 
@@ -70,11 +64,6 @@ export default function RegisterPage() {
       console.log("Registration response:", response);
 
       if (response.status === 201 || response.status === 200) {
-        // If your backend returns a token on registration (uncommon)
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-        }
-
         router.push({
           pathname: "/auth/login",
           query: { registered: "true", email: form.email },
@@ -131,13 +120,13 @@ export default function RegisterPage() {
         </h1>
         <ul className="space-y-4">
           <li className="flex items-center">
-            <span className="inline-blockbg-opacity-30 rounded-full p-1 mr-3">
+            <span className="inline-block rounded-full p-1 mr-3">
               <FontAwesomeIcon icon={faCheckCircle} />
             </span>
             <span className="text-white">Find local job opportunities</span>
           </li>
           <li className="flex items-center">
-            <span className="inline-block bg-opacity-30 rounded-full p-1 mr-3">
+            <span className="inline-block rounded-full p-1 mr-3">
               <FontAwesomeIcon icon={faCheckCircle} />
             </span>
             <span className="text-white">
@@ -145,18 +134,10 @@ export default function RegisterPage() {
             </span>
           </li>
           <li className="flex items-center">
-            <span className="inline-block bg-opacity-30 rounded-full p-1 mr-3">
+            <span className="inline-block rounded-full p-1 mr-3">
               <FontAwesomeIcon icon={faCheckCircle} />
             </span>
-            <span className="text-white">Manage your applications (soon!)</span>
-          </li>
-          <li className="flex items-center">
-            <span className="inline-block bg-opacity-30 rounded-full p-1 mr-3">
-              <FontAwesomeIcon icon={faCheckCircle} />
-            </span>
-            <span className="text-white">
-              Employers: Post jobs and find talent
-            </span>
+            <span className="text-white">Manage your applications</span>
           </li>
         </ul>
       </div>
@@ -217,10 +198,10 @@ export default function RegisterPage() {
             </div>
             <div className="hidden lg:block text-2xl font-bold text-transparent">
               Guwahati Jobs
-            </div>{" "}
+            </div>
             <div className="hidden md:block text-sm">
               <span className="text-gray-600 mr-2">
-                Already have a candidate account?
+                Already have an account?
               </span>
               <Link href="/auth/login" legacyBehavior>
                 <a className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-400 font-medium">
@@ -283,16 +264,15 @@ export default function RegisterPage() {
                 </div>
                 <div>
                   <TextField
-                    label="Phone Number (Optional)" // Mark as optional in label
-                    type="tel" // Use type="tel" for better mobile input
+                    label="Phone Number (Optional)"
+                    type="tel"
                     value={form.phone_number}
-                    onChange={
-                      (value: string) =>
-                        handleTextFieldChange("phone_number", value) // Use adapter
+                    onChange={(value: string) =>
+                      handleTextFieldChange("phone_number", value)
                     }
-                    placeholder="+91 12345 67890" // Example placeholder
-                    name="phone_number" // Set name attribute
-                    autoComplete="tel" // Add autocomplete hint
+                    placeholder="+91 12345 67890"
+                    name="phone_number"
+                    autoComplete="tel"
                   />
                 </div>
                 <div>

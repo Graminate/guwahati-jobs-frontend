@@ -12,7 +12,7 @@ interface User {
   email: string;
   first_name: string;
   last_name: string;
-  role: string;
+
 }
 
 interface AuthContextType {
@@ -33,7 +33,6 @@ const decodeTokenAndGetUser = (token: string): User | null => {
       email: string;
       first_name: string;
       last_name: string;
-      role: string;
       exp: number;
     }>(token);
 
@@ -47,7 +46,6 @@ const decodeTokenAndGetUser = (token: string): User | null => {
       email: decoded.email,
       first_name: decoded.first_name,
       last_name: decoded.last_name,
-      role: decoded.role,
     };
   } catch (error) {
     console.error("Token decoding failed:", error);
