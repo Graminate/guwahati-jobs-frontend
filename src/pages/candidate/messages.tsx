@@ -6,6 +6,7 @@ import MessageBody from "./messages/messageBody";
 import { useAuth } from "@/context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import axiosInstance from "@/utils/axiosInstance";
 
 type User = {
   id: number;
@@ -56,20 +57,8 @@ const MessagesPage = () => {
       }
 
       try {
-        const response = await fetch(
-          `http://localhost:3000/users/${authUser.userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch user data: ${response.statusText}`);
-        }
-
-        const data: User = await response.json();
+        const response = await axiosInstance.get(`/users/${authUser.userId}`);
+        const data: User = response.data;
         setUserData(data);
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -143,12 +132,10 @@ const MessagesPage = () => {
                 user={userData || undefined}
               />
             ) : (
-              <div className="hidden md:flex items-center justify-center h-full text-gray-500 bg-white">
+              <div className="hidden md:flex items-center justify-center h-full text-gray-300">
                 <div className="text-center">
                   <p className="text-lg">No message selected</p>
-                  <p className="text-sm mt-2">
-                    Select a message from the list to view it here
-                  </p>
+                  
                 </div>
               </div>
             )}

@@ -17,6 +17,7 @@ import Button from "@/components/ui/Button";
 import Head from "next/head";
 import { useAuth } from "@/context/AuthContext";
 import TextField from "@/components/ui/TextField";
+import axiosInstance from "@/utils/axiosInstance";
 
 type User = {
   id: number;
@@ -75,20 +76,9 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(
-          `http://localhost:3000/users/${authUser.userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await axiosInstance.get(`/users/${authUser.userId}`);
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch user data: ${response.statusText}`);
-        }
-
-        const data: User = await response.json();
+        const data: User = response.data;
         setUserData(data);
 
         const phoneParts = data.phone_number?.split(" ") || ["+49", ""];
@@ -111,7 +101,11 @@ const Profile = () => {
         });
       } catch (err: any) {
         console.error("Error fetching user data:", err);
-        setError(err.message || "An unknown error occurred");
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "An unknown error occurred"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -149,37 +143,25 @@ const Profile = () => {
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:3000/users/${authUser?.userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            phone_number:
-              `${formData.phoneCountryCode} ${formData.phoneNumber}`.trim(),
-            profile_picture: formData.profile_picture || null,
-            region: formData.region || null,
-            cv: formData.cv || null,
-          }),
-        }
-      );
+      const response = await axiosInstance.put(`/users/${authUser?.userId}`, {
+        email: formData.email,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        phone_number:
+          `${formData.phoneCountryCode} ${formData.phoneNumber}`.trim(),
+        profile_picture: formData.profile_picture || null,
+        region: formData.region || null,
+        cv: formData.cv || null,
+      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update user: ${response.statusText}`);
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = response.data;
       setUserData(updatedUser);
       setIsEditing(false);
     } catch (err: any) {
       console.error("Error updating user:", err);
-      setError(err.message || "Failed to update profile");
+      setError(
+        err.response?.data?.message || err.message || "Failed to update profile"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -188,38 +170,29 @@ const Profile = () => {
   const handleSaveLinks = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:3000/users/${authUser?.userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            linkedin: linksFormData.linkedin || null,
-            github: linksFormData.github || null,
-            behance: linksFormData.behance || null,
-            portfolio: linksFormData.portfolio || null,
-          }),
-        }
-      );
+      const response = await axiosInstance.put(`/users/${authUser?.userId}`, {
+        linkedin: linksFormData.linkedin || null,
+        github: linksFormData.github || null,
+        behance: linksFormData.behance || null,
+        portfolio: linksFormData.portfolio || null,
+      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update user: ${response.statusText}`);
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = response.data;
       setUserData(updatedUser);
       setIsEditingLinks(false);
     } catch (err: any) {
       console.error("Error updating links:", err);
-      setError(err.message || "Failed to update professional links");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to update professional links"
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ... rest of the component remains the same ...
   if (isLoadingAuth) {
     return (
       <DefaultLayout>

@@ -37,7 +37,7 @@ export default function LoginPage() {
     if (token) {
       const decoded = decodeToken(token);
       if (decoded) {
-        router.replace("/candidate"); // Simplified redirect to candidate dashboard
+        router.replace("/candidate");
       } else {
         localStorage.removeItem("token");
         setIsCheckingAuth(false);
