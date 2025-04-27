@@ -227,6 +227,15 @@ export default function LoginPage() {
                     placeholder="Enter your password"
                     isRequired
                   />
+                  <div className="text-right -mt-2">
+                    <button
+                      type="button"
+                      onClick={() => router.push("/auth/forgot-password")}
+                      className="text-sm text-blue-600 hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                   <Button
                     text={isLoading ? "Logging in..." : "Login"}
                     style="primary"
