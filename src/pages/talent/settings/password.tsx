@@ -6,29 +6,35 @@ const PasswordSettingsPage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [canSaveChanges, setCanSaveChanges] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
-    const isFormValid =
-      currentPassword.length > 0 &&
-      newPassword.length > 0 &&
+    // The button should be enabled if the user has started typing in any field.
+    const formIsDirty =
+      currentPassword.length > 0 ||
+      newPassword.length > 0 ||
       confirmPassword.length > 0;
-    setCanSaveChanges(isFormValid);
+    setIsDirty(formIsDirty);
   }, [currentPassword, newPassword, confirmPassword]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSaveChanges) return;
+    if (!isDirty) return;
 
     if (newPassword !== confirmPassword) {
       alert("New passwords do not match.");
       return;
     }
     console.log("Changing password...");
+
+    // Reset fields after submission to reset the dirty state
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   return (
-    <SettingsLayout isDirty={canSaveChanges} handleSubmit={handleSubmit}>
+    <SettingsLayout isDirty={isDirty} handleSubmit={handleSubmit}>
       <section>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Account settings

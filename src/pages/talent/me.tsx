@@ -8,9 +8,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
 import axiosInstance from "@/utils/axiosInstance";
 import DefaultLayout from "@/layout/DefaultLayout";
+import Button from "@/components/ui/Button";
 
 type User = {
   id: number;
@@ -32,6 +34,7 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { user: authUser, isLoggedIn, isLoadingAuth } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -60,6 +63,10 @@ const Profile = () => {
 
     fetchUserData();
   }, [isLoggedIn, authUser, isLoadingAuth]);
+
+  const handleEditProfile = () => {
+    router.push("/talent/settings/profile");
+  };
 
   const getFileNameFromUrl = (url: string) => {
     try {
@@ -106,9 +113,11 @@ const Profile = () => {
         <div className="min-h-screen bg-white p-4 sm:p-6 lg:p-8 font-sans">
           <div className="max-w-2xl mx-auto">
             <header className="flex justify-end mb-6">
-              <button className="bg-white text-sm font-medium text-gray-200 py-2 px-4 border border-gray-400 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Edit Profile
-              </button>
+              <Button
+                text="Edit Profile"
+                style="secondary"
+                onClick={handleEditProfile}
+              />
             </header>
 
             <main className="space-y-8">

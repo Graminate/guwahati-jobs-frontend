@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import DefaultLayout from "@/layout/DefaultLayout";
+import Button from "@/components/ui/Button";
 
 type SettingsLayoutProps = {
   children: ReactNode;
@@ -33,13 +34,13 @@ const SettingsLayout = ({
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
             <header className="flex justify-between items-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-              <button
+
+              <Button
                 type="submit"
-                disabled={!isDirty}
-                className="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Save changes
-              </button>
+                text="Save changes"
+                isDisabled={!isDirty}
+                style="primary"
+              />
             </header>
 
             <nav className="mb-8">

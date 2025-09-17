@@ -1,7 +1,7 @@
 type Props = {
   text?: string;
   arrow?: "" | "up" | "down" | "left" | "right";
-  style?: "primary" | "secondary" | "ghost" | "home";
+  style?: "primary" | "secondary" | "ghost" | "home" | "delete";
   isDisabled?: boolean;
   width?: "small" | "medium" | "large";
   add?: boolean;
@@ -37,11 +37,13 @@ const Button = ({
       case "home":
         return "bg-white text-sm my-10 py-3 px-7 rounded-md shadow-lg hover:bg-black hover:text-white border border-solid border-black";
       case "primary":
-        return "bg-indigo-200 text-sm hover:bg-indigo-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 text-white justify-center";
+        return "bg-gray-200 text-sm hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 text-white justify-center";
       case "secondary":
-        return "bg-white text-sm disabled:text-gray-400 disabled:bg-transparent disabled:border-gray-300 hover:bg-indigo-300 hover:bg-indigo-400 text-indigo-200 hover:text-indigo-200 border border-indigo-200 justify-center";
+        return "bg-white text-sm disabled:text-gray-400 disabled:bg-transparent disabled:border-gray-300 hover:bg-gray-300 hover:bg-light text-gray-200 hover:text-gray-200 border border-gray-300 justify-center";
       case "ghost":
-        return "bg-transparent hover:text-indigo-100 text-sm font-semibold text-indigo-200 justify-center disabled:text-gray-300 disabled:bg-transparent";
+        return "bg-transparent hover:bg-gray-500 text-sm font-semibold text-gray-200 justify-center disabled:text-gray-300 disabled:bg-transparent";
+      case "delete":
+        return "bg-red-300 text-sm hover:bg-red-400 disabled:bg-red-300 disabled:text-light disabled:opacity-50 text-red-100 justify-center";
       default:
         return "";
     }
@@ -85,7 +87,7 @@ const Button = ({
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="w-6 h-6 mr-2"
+          className="w-6 h-6"
         >
           <path
             strokeLinecap="round"
@@ -104,7 +106,7 @@ const Button = ({
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="w-6 h-6 ml-2"
+          className="w-6 h-6"
         >
           <path
             strokeLinecap="round"
