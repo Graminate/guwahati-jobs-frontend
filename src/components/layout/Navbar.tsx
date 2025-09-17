@@ -106,32 +106,8 @@ const Navbar = ({
               {isLoggedIn && user ? (
                 <>
                   <Menu as="div" className="relative ml-3">
-                    <MenuButton className="flex items-center">
+                    <MenuButton className="flex items-center text-sm font-medium text-gray-600 hover:text-indigo-600">
                       <span className="sr-only">Open user menu</span>
-                      <img
-                        src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(
-                          user.first_name
-                        )}+${encodeURIComponent(
-                          user.last_name
-                        )}&size=250&background=e0e7ff&color=4f46e5`}
-                        alt="User avatar"
-                        className="w-8 h-8 rounded-full border border-gray-300"
-                      />
-
-                      <div className="flex flex-row space-x-1 mx-2">
-                        <span className="text-sm font-medium hidden lg:block">
-                          {user.first_name}
-                        </span>
-                        <span className="text-sm font-medium hidden lg:block">
-                          {user.last_name}
-                        </span>
-                      </div>
-
-                      <FontAwesomeIcon
-                        icon={faChevronDown}
-                        className="h-4 w-4 text-gray-400"
-                        aria-hidden="true"
-                      />
                     </MenuButton>
                     <Transition
                       as={Fragment}
@@ -157,9 +133,7 @@ const Navbar = ({
                                         : item.onClick
                                     }
                                     className={`${
-                                      focus
-                                        ? "bg-gray-500"
-                                        : "text-gray-700"
+                                      focus ? "bg-gray-500" : "text-gray-700"
                                     } block px-4 py-2 text-sm`}
                                   >
                                     {item.label}
@@ -247,18 +221,7 @@ const Navbar = ({
               id="mobile-sidebar"
               className="fixed inset-y-0 left-0 w-full bg-white"
             >
-              <Sidebar
-                isMobile={true}
-                onClose={() => setMobileMenuOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
-                handleLogout={handleLogout}
-                userDropdownItems={userDropdownItems}
-                loginUrl="/auth/login"
-                registerUrl="/auth/register"
-                currentPath={pathname}
-                homepageLinks={homepageNavLinks}
-              />
+
             </DialogPanel>
           </TransitionChild>
         </Dialog>

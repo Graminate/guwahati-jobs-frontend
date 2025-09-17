@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import DefaultLayout from "@/layout/DefaultLayout";
-import JobAlertCard from "@/components/cards/JobAlertCard";
 import Button from "@/components/ui/Button";
 import router from "next/router";
 import Dropdown from "@/components/ui/Dropdown";
@@ -78,7 +77,7 @@ const CandidateDashboard = () => {
           <div className="mx-auto">
             <h1 className="text-3xl font-bold text-black mb-6">Account</h1>
             <div className="flex flex-col gap-4">
-              <JobAlertCard />
+        
               <div className="border border-gray-500 rounded-lg shadow-sm bg-white w-full max-w-4xl mx-auto">
                 <div className="p-4 md:p-6">
                   <h2 className="text-lg font-semibold text-gray-800 mb-4">
