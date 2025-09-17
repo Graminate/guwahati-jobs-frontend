@@ -28,9 +28,9 @@ const candidateMenuItems: CandidateMenuItem[] = [
   {
     icon: faUser,
     label: "Profile",
-    href: "/talent/profile",
+    href: "/talent/me",
   },
-  { icon: faGear, label: "Settings", href: "/talent/settings/account" },
+  { icon: faGear, label: "Settings", href: "/talent/settings/profile" },
 ];
 
 type User = {
@@ -93,7 +93,7 @@ const Sidebar = ({
     {
       icon: faUser,
       label: "Profile",
-      href: "/talent/profile",
+      href: "/talent/me",
     },
     {
       icon: faGear,
@@ -214,11 +214,7 @@ const Sidebar = ({
               </div>
             )}
 
-            <div
-              className={`${
-                !isCollapsed ? "rounded-lg p-2" : ""
-              }`}
-            >
+            <div className={`${!isCollapsed ? "rounded-lg p-2" : ""}`}>
               {isUserMenuOpen && !isCollapsed && (
                 <>
                   <UserMenuContent />
