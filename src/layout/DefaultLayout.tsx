@@ -37,6 +37,11 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const handleToggleSidebar = () => {
+    setSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -201,19 +206,22 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
               user={user}
               currentPath={currentPath}
               homepageLinks={homepageNavLinks}
+              isCollapsed={isSidebarCollapsed}
+              onToggle={handleToggleSidebar}
             />
           </div>
         )}
 
         <main
-          className={`flex-1 pt-16 ${
-            !noSidebar ? "md:ml-64 md:pl-6" : ""
+          className={`flex-1 pt-16 transition-all duration-300 ease-in-out ${
+            !noSidebar
+              ? `${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"} md:pl-6`
+              : ""
           }`}
         >
           {children}
         </main>
       </div>
-
     </div>
   );
 };

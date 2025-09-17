@@ -122,7 +122,7 @@ const CandidateDashboard = () => {
                         text="Cancel"
                         style="secondary"
                         type="button"
-                        onClick={() => router.push("/candidate")}
+                        onClick={() => router.push("/talent")}
                       />
                       <Button
                         text="Save Changes"

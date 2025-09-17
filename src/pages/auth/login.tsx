@@ -37,7 +37,7 @@ export default function LoginPage() {
     if (token) {
       const decoded = decodeToken(token);
       if (decoded) {
-        router.replace("/candidate");
+        router.replace("/talent");
       } else {
         localStorage.removeItem("token");
         setIsCheckingAuth(false);
@@ -59,7 +59,7 @@ export default function LoginPage() {
       });
 
       localStorage.setItem("token", response.data.token);
-      router.push("/candidate"); // Always redirect to candidate dashboard after login
+      router.push("/talent");
     } catch (err: any) {
       console.error("Login error:", err);
 
@@ -166,7 +166,7 @@ export default function LoginPage() {
             onClick={() => setIsMobileMenuOpen(false)}
           ></div>
         )}
-        {/* --- Main Content Area (Form) --- */}
+
         <div className="w-full lg:w-3/5 flex flex-col bg-white">
           <div className="flex justify-between items-center p-4 lg:p-6">
             <div className="flex items-center justify-between w-full lg:hidden">
@@ -182,7 +182,6 @@ export default function LoginPage() {
 
             <div className="lg:block"></div>
 
-            {/* Registration Link (Top Right) */}
             <div className="hidden md:block text-sm">
               <span className="text-gray-600 mr-2">No account yet?</span>
               <Link href="/auth/register" legacyBehavior>
@@ -193,7 +192,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Form Container */}
           <div className="flex-grow flex items-center justify-center p-4">
             <div className="w-full max-w-md">
               <form onSubmit={handleLogin} className="w-full">
@@ -227,7 +225,12 @@ export default function LoginPage() {
                     placeholder="Enter your password"
                     isRequired
                   />
-                  <div className="text-right -mt-2">
+                  <div className="flex justify-between items-center -mt-2">
+                    <Link href="/auth/company_login" legacyBehavior>
+                      <a className="text-sm text-blue-600 hover:underline">
+                        Login as Employer
+                      </a>
+                    </Link>
                     <button
                       type="button"
                       onClick={() => router.push("/auth/forgot-password")}

@@ -4,12 +4,13 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
-  faEnvelope,
-  faBriefcase,
   faUser,
   faGear,
   faX,
   faRightFromBracket,
+  faPaperclip,
+  faChevronLeft,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 type CandidateMenuItem = {
@@ -19,20 +20,14 @@ type CandidateMenuItem = {
 };
 
 const candidateMenuItems: CandidateMenuItem[] = [
-  { icon: faHome, label: "Dashboard", href: "/candidate" },
-  { icon: faEnvelope, label: "Messages", href: "/candidate/messages" },
-  {
-    icon: faBriefcase,
-    label: "Jobs for you",
-    href: "/candidate/job-recommendations",
-  },
+  { icon: faHome, label: "Home", href: "/talent" },
+  { icon: faPaperclip, label: "Applications", href: "/talent" },
   {
     icon: faUser,
     label: "Profile",
-    href: "/candidate/profile",
+    href: "/talent/profile",
   },
-
-  { icon: faGear, label: "Settings", href: "/candidate/settings/account" },
+  { icon: faGear, label: "Settings", href: "/talent/settings/account" },
 ];
 
 type User = {
@@ -61,6 +56,8 @@ type SidebarProps = {
   registerUrl?: string;
   currentPath?: string;
   homepageLinks?: HomepageLink[];
+  isCollapsed?: boolean;
+  onToggle?: () => void;
 };
 
 const Sidebar = ({
@@ -74,6 +71,8 @@ const Sidebar = ({
   registerUrl = "/auth/register",
   currentPath = "/",
   homepageLinks = [],
+  isCollapsed = false,
+  onToggle = () => {},
 }: SidebarProps) => {
   const handleLinkClick = () => {
     if (isMobile) {
@@ -89,18 +88,19 @@ const Sidebar = ({
   };
 
   const mainNavLinks =
-    isLoggedIn && currentPath?.startsWith("/candidate")
+    isLoggedIn && currentPath?.startsWith("/talent")
       ? candidateMenuItems
       : homepageLinks;
-  const showCandidateIcons =
-    isLoggedIn && currentPath?.startsWith("/candidate");
+  const showCandidateIcons = isLoggedIn && currentPath?.startsWith("/talent");
 
   return (
     <aside
-      className={`w-64 bg-white p-4 ${
+      className={`bg-white p-4 transition-all duration-300 ease-in-out flex flex-col ${
         isMobile
-          ? "h-full flex flex-col w-full"
-          : "fixed h-[calc(100vh-4rem)] top-16 left-0 z-50"
+          ? "h-full w-full"
+          : `fixed h-[calc(100vh-4rem)] top-16 left-0 z-50 ${
+              isCollapsed ? "w-20" : "w-64"
+            }`
       }`}
     >
       {isMobile && (
@@ -131,7 +131,9 @@ const Sidebar = ({
               <Link
                 href={item.href || "#"}
                 onClick={handleLinkClick}
-                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 hover:text-gray-900"
+                className={`flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 hover:text-gray-900 ${
+                  isCollapsed && !isMobile ? "justify-center" : ""
+                }`}
               >
                 {showCandidateIcons && item.icon && (
                   <FontAwesomeIcon
@@ -139,10 +141,15 @@ const Sidebar = ({
                     className="w-5 h-5 text-gray-600 flex-shrink-0"
                   />
                 )}
-
                 <span
-                  className={`${
-                    !showCandidateIcons || !item.icon ? "ml-8" : ""
+                  className={`whitespace-nowrap transition-opacity duration-200 ${
+                    isCollapsed && !isMobile
+                      ? "opacity-0 hidden"
+                      : "opacity-100 ml-3"
+                  } ${
+                    (!showCandidateIcons || !item.icon) && !isCollapsed
+                      ? "ml-8"
+                      : ""
                   }`}
                 >
                   {item.label}
@@ -153,13 +160,36 @@ const Sidebar = ({
         </ul>
       </nav>
 
+      {!isMobile && (
+        <div className="pt-4 border-t border-gray-200 mt-auto">
+          <button
+            onClick={onToggle}
+            className={`flex items-center w-full p-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 hover:text-gray-900 ${
+              isCollapsed ? "justify-center" : ""
+            }`}
+          >
+            <FontAwesomeIcon
+              icon={isCollapsed ? faChevronRight : faChevronLeft}
+              className="w-5 h-5 text-gray-600 flex-shrink-0"
+            />
+            <span
+              className={`whitespace-nowrap transition-opacity duration-200 ${
+                isCollapsed ? "opacity-0 hidden" : "opacity-100 ml-3"
+              }`}
+            >
+              Collapse
+            </span>
+          </button>
+        </div>
+      )}
+
       {isMobile && (
         <div className="mt-auto pt-4 flex-shrink-0">
           {isLoggedIn && user ? (
             <>
               <Link
                 className="flex items-center px-3 py-2 mb-2"
-                href={`/candidate`}
+                href={`/talent`}
               >
                 <img
                   src={`https://eu.ui-avatars.com/api/?name=${encodeURIComponent(

@@ -6,11 +6,7 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import ApplicationsCard from "@/components/cards/ApplicationsCard";
 
-type ApplicationStatus =
-  | "Submitted"
-  | "In Review"
-  | "Selected"
-  | "Unavailable";
+type ApplicationStatus = "Submitted" | "In Review" | "Selected" | "Unavailable";
 type ActiveTab = "jobApplications" | "spontaneousApplications";
 
 interface JobApplication {

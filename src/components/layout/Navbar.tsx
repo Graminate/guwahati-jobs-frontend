@@ -144,16 +144,6 @@ const Navbar = ({
                     >
                       <MenuItems className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg">
                         <div className="py-1">
-                          <div className="px-4 py-2 border-b border-gray-500 hover:bg-gray-500">
-                            <p className="text-sm font-medium truncate">
-                              <Link
-                                href={`/feedback`}
-                                className={`block text-sm py-1`}
-                              >
-                                Give Feedback
-                              </Link>
-                            </p>
-                          </div>
                           {/* Use userDropdownItems from props */}
                           {userDropdownItems.map((item) => (
                             <MenuItem key={item.label}>
