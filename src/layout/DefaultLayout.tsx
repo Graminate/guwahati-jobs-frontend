@@ -206,8 +206,6 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
               user={user}
               currentPath={currentPath}
               homepageLinks={homepageNavLinks}
-              isCollapsed={isSidebarCollapsed}
-              onToggle={handleToggleSidebar}
             />
           </div>
         )}
