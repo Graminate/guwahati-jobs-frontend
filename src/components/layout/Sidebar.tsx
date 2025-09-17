@@ -108,7 +108,7 @@ const Sidebar = ({
   ];
 
   const UserMenuContent = () => (
-    <ul className="space-y-1">
+    <ul className="space-y-1 bg-white">
       {bottomMenuItems.map((item) => (
         <li key={item.label}>
           <Link
@@ -216,7 +216,7 @@ const Sidebar = ({
 
             <div
               className={`${
-                !isCollapsed ? "rounded-lg bg-white p-2 shadow-lg" : ""
+                !isCollapsed ? "rounded-lg p-2" : ""
               }`}
             >
               {isUserMenuOpen && !isCollapsed && (

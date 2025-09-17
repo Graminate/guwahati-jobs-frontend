@@ -1,96 +1,64 @@
 import React from "react";
 import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBriefcase, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
-interface Application {
+export type ApplicationStatus = "Submitted" | "In Review";
+
+export interface JobApplication {
   id: string;
+  logo: string;
   company: string;
   title: string;
-  logo: string | React.ReactNode;
-  isLogoComponent: boolean;
-  status: string;
-  appliedDate: string;
+  status: ApplicationStatus;
+  appliedText: string;
 }
 
-interface ApplicationsCardProps {
-  app: Application;
-  getStatusBadgeStyle: (status: string) => string;
-  className?: string;
-}
+const StatusBadge = ({ status }: { status: ApplicationStatus }) => {
+  const baseStyle = "px-3 py-1 text-xs font-medium rounded-full";
+  let specificStyle = "";
 
-const ApplicationsCard = ({
-  app,
-  getStatusBadgeStyle,
-  className = "",
-}: ApplicationsCardProps) => {
-  return (
-    <div
-      className={`p-4 flex items-center justify-between hover:bg-gray-400 hover:rounded-lg transition-colors duration-150 ease-in-out ${className}`}
-    >
-      {/* Left side: Logo + Text */}
-      <div className="flex items-center space-x-4">
-        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-400 border border-gray-200 flex items-center justify-center overflow-hidden">
-          {app.isLogoComponent ? (
-            app.logo
-          ) : typeof app.logo === "string" ? (
-            <Image
-              src={app.logo as string}
-              alt={`${app.company} logo`}
-              width={48}
-              height={48}
-              className="object-contain"
-              onError={(e) =>
-                (e.currentTarget.src = "/path/to/default/logo.png")
-              }
-            />
-          ) : (
-            <FontAwesomeIcon
-              icon={faBriefcase}
-              className="text-gray-400 text-2xl"
-            />
-          )}
-        </div>
+  if (status === "Submitted") {
+    specificStyle = " border border-gray-300 text-gray-700";
+  } else if (status === "In Review") {
+    specificStyle = " border border-gray-300 text-gray-800";
+  }
 
-        <div>
-          <p className="text-sm font-semibold text-gray-800">
-            {app.title}{" "}
-            {app.status === "Not Available" && (
-              <span
-                className={`ml-2 text-xs font-medium px-2 py-0.5 rounded ${getStatusBadgeStyle(
-                  app.status
-                )}`}
-              >
-                not available
-              </span>
-            )}
-          </p>
-          <p className="text-sm text-gray-600">{app.company}</p>
-        </div>
-      </div>
-
-      {/* Right side: Status + Date + Actions */}
-      <div className="flex items-center space-x-4 md:space-x-10">
-        <div className="text-right hidden sm:block">
-          {app.status !== "Not Available" && (
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded ${getStatusBadgeStyle(
-                app.status
-              )}`}
-            >
-              {app.status}
-            </span>
-          )}
-          <p className="text-sm text-dark mt-1">Applied on {app.appliedDate}</p>
-        </div>
-
-        {/* Action Button */}
-        <button className="text-gray-300 focus:outline-none px-2 py-1 rounded-md border border-gray-400 hover:bg-gray-500">
-          <FontAwesomeIcon icon={faEllipsis} />
-        </button>
-      </div>
-    </div>
-  );
+  return <span className={`${baseStyle} ${specificStyle}`}>{status}</span>;
 };
 
-export default ApplicationsCard;
+const ApplicationCard = ({ app }: { app: JobApplication }) => (
+  <div className="bg-white border border-gray-400 rounded-xl p-5 flex flex-col h-full min-h-[180px] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
+    <div className="flex justify-between items-start mb-4">
+      <div className="w-12 h-12 relative">
+        <Image
+          src={app.logo}
+          alt={`${app.company} logo`}
+          layout="fill"
+          objectFit="contain"
+          className="rounded-full"
+        />
+      </div>
+      <StatusBadge status={app.status} />
+    </div>
+    <div className="flex-grow">
+      <h3 className="font-semibold text-gray-800">{app.company}</h3>
+      <p className="text-sm text-gray-200">{app.title}</p>
+    </div>
+    <div className="flex justify-between items-center mt-4">
+      <p className="text-xs text-gray-200">{app.appliedText}</p>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 text-gray-400"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </div>
+  </div>
+);
+
+export default ApplicationCard;

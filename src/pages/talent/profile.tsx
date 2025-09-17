@@ -8,7 +8,6 @@ import {
   faPencil,
   faPhone,
   faPlus,
-  faTrash,
   faSpinner,
   faX,
 } from "@fortawesome/free-solid-svg-icons";
