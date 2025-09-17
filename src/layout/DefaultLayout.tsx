@@ -189,14 +189,16 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
 
   return (
     <div className="flex flex-col">
-      <Navbar
-        isLoggedIn={isLoggedIn}
-        user={user}
-        loading={loading}
-        handleLogout={handleLogout}
-        userDropdownItems={userDropdownItems}
-        homepageNavLinks={homepageNavLinks}
-      />
+      {noSidebar && (
+        <Navbar
+          isLoggedIn={isLoggedIn}
+          user={user}
+          loading={loading}
+          handleLogout={handleLogout}
+          userDropdownItems={userDropdownItems}
+          homepageNavLinks={homepageNavLinks}
+        />
+      )}
       <div className="flex flex-1 w-full mx-auto">
         {!noSidebar && (
           <div className="hidden md:block flex-shrink-0 w-0">
@@ -211,7 +213,9 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
         )}
 
         <main
-          className={`flex-1 pt-16 transition-all duration-300 ease-in-out ${
+          className={`flex-1 ${
+            noSidebar ? "pt-16" : ""
+          } transition-all duration-300 ease-in-out ${
             !noSidebar
               ? `${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"} md:pl-6`
               : ""

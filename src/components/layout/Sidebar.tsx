@@ -98,7 +98,7 @@ const Sidebar = ({
     {
       icon: faGear,
       label: "Go to settings",
-      href: "/talent/settings/account",
+      href: "/talent/settings/profile",
     },
     {
       icon: faQuestionCircle,

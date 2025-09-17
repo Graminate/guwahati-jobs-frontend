@@ -73,7 +73,6 @@ const Navbar = ({
       <nav className="bg-white shadow-xs w-full fixed top-0 left-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo/Brand */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center space-x-2">
                 <Image
@@ -87,7 +86,6 @@ const Navbar = ({
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex md:space-x-6">
               {pathname === "/" && (
                 <div className="flex flex-row">
@@ -120,7 +118,6 @@ const Navbar = ({
                     >
                       <MenuItems className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg">
                         <div className="py-1">
-                          {/* Use userDropdownItems from props */}
                           {userDropdownItems.map((item) => (
                             <MenuItem key={item.label}>
                               {({ focus }) =>
@@ -182,7 +179,6 @@ const Navbar = ({
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -202,7 +198,6 @@ const Navbar = ({
         </div>
       </nav>
 
-      {/* Mobile Sidebar Section - Use props */}
       <Transition show={mobileMenuOpen} as={Fragment}>
         <Dialog
           onClose={() => setMobileMenuOpen(false)}
@@ -220,9 +215,7 @@ const Navbar = ({
             <DialogPanel
               id="mobile-sidebar"
               className="fixed inset-y-0 left-0 w-full bg-white"
-            >
-
-            </DialogPanel>
+            ></DialogPanel>
           </TransitionChild>
         </Dialog>
       </Transition>
