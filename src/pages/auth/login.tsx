@@ -37,7 +37,7 @@ export default function LoginPage() {
     if (token) {
       const decoded = decodeToken(token);
       if (decoded) {
-        router.replace("/talent");
+        router.replace("/talent/home");
       } else {
         localStorage.removeItem("token");
         setIsCheckingAuth(false);
@@ -59,7 +59,7 @@ export default function LoginPage() {
       });
 
       localStorage.setItem("token", response.data.token);
-      router.push("/talent");
+      router.push("/talent/home");
     } catch (err: any) {
       console.error("Login error:", err);
 

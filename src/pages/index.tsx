@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   const { isLoggedIn, isLoadingAuth } = useAuth();
-  const getStartedLink = isLoggedIn ? "/talent" : "/auth/register";
+  const getStartedLink = isLoggedIn ? "/talent/home" : "/auth/register";
   return (
     <>
       <Head>

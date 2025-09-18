@@ -7,17 +7,15 @@ import React, {
 } from "react";
 import { jwtDecode } from "jwt-decode";
 
-// A flexible User interface to handle both Job Seekers and Providers
 interface User {
   userId: number;
   email: string;
   role: "job_seeker" | "job_provider";
-  first_name?: string; // For Job Seekers
-  last_name?: string; // For Job Seekers
-  company_name?: string; // For Job Providers
+  first_name?: string;
+  last_name?: string;
+  company_name?: string;
 }
 
-// The raw decoded token will have one of these shapes
 type DecodedToken = {
   exp: number;
 } & (
@@ -40,7 +38,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   isLoadingAuth: boolean;
   user: User | null;
-  login: (token: string) => void; // Added login function
+  login: (token: string) => void;
   logout: () => void;
 }
 
@@ -57,7 +55,6 @@ const decodeTokenAndGetUser = (token: string): User | null => {
       return null;
     }
 
-    // Return a unified user object based on the role in the token
     if (decoded.role === "job_seeker") {
       return {
         userId: decoded.userId,
@@ -99,7 +96,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoadingAuth(false);
   }, []);
 
-  // Login function implementation
   const login = (token: string) => {
     const userData = decodeTokenAndGetUser(token);
     if (userData) {
@@ -107,7 +103,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(userData);
       setIsLoggedIn(true);
     } else {
-      // If token is invalid for any reason, ensure logged out state
       logout();
     }
   };
@@ -123,7 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoggedIn,
     isLoadingAuth,
     user,
-    login, // Provide login function to context
+    login,
     logout,
   };
 
