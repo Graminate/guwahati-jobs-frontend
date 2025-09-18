@@ -2,18 +2,40 @@ import Head from "next/head";
 import Link from "next/link";
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useAuth } from "@/context/AuthContext";
 import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
+import axiosInstance from "@/utils/axiosInstance";
 
 export default function CompanyLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
+  const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    console.log("Login attempted with:", { email, password });
+    setError(null);
+
+    try {
+      const response = await axiosInstance.post("/auth/login/job-provider", {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+      login(token);
+      router.push("/recruiter/");
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      setError(
+        err.response?.data?.message || "Invalid credentials. Please try again."
+      );
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -31,12 +53,15 @@ export default function CompanyLogin() {
               height={500}
               className="h-40 w-40 rounded-full"
               priority
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://placehold.co/160x160/000000/FFFFFF?text=Logo";
+              }}
             />
           </Link>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">Enter your credentials.</p>
-
             <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
               Log into Guwahati-Jobs
             </h2>
@@ -51,7 +76,7 @@ export default function CompanyLogin() {
                   type="email"
                   value={email}
                   onChange={(value: string) => setEmail(value)}
-                  placeholder="name@company.comm"
+                  placeholder="name@company.com"
                   isRequired
                 />
               </div>
@@ -78,12 +103,18 @@ export default function CompanyLogin() {
               </div>
             </div>
 
-            <div className="flex flex-col ">
+            {error && (
+              <div className="text-center text-sm text-red-600 p-2 bg-red-50 rounded-md border border-red-200">
+                {error}
+              </div>
+            )}
+
+            <div className="flex flex-col">
               <Button
                 text={isLoading ? "Logging in..." : "Login"}
                 style="primary"
                 type="submit"
-                isDisabled={isLoading}
+                isDisabled={isLoading || !email || !password}
               />
             </div>
           </form>
