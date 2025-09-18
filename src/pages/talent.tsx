@@ -44,7 +44,9 @@ const TalentPage = () => {
       }
 
       try {
-        const response = await axiosInstance.get(`/users/${authUser.userId}`);
+        const response = await axiosInstance.get(
+          `/job-seeker/${authUser.userId}`
+        );
 
         if (response.data && response.data.first_name) {
           setFirstName(response.data.first_name);

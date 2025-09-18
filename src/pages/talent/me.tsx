@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSpinner,
   faEllipsis,
-  faGlobe,
   faFilePdf,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
@@ -19,14 +18,13 @@ type User = {
   email: string;
   first_name: string;
   last_name: string;
-  phone?: string;
+  phone_number?: string;
   profile_picture?: string;
-  region?: string;
+  address_line_1?: string;
+  address_line_2?: string;
+  city?: string;
+  pin_code?: string;
   cv?: string;
-  linkedin?: string;
-  github?: string;
-  portfolio?: string;
-  website?: string;
 };
 
 const Profile = () => {
@@ -47,7 +45,9 @@ const Profile = () => {
       }
 
       try {
-        const response = await axiosInstance.get(`/users/${authUser.userId}`);
+        const response = await axiosInstance.get(
+          `/job-seeker/${(authUser as any).userId}`
+        );
         setUserData(response.data);
       } catch (err: any) {
         console.error("Error fetching user data:", err);
@@ -76,16 +76,30 @@ const Profile = () => {
     }
   };
 
+  const formatAddress = () => {
+    if (!userData) return null;
+    const parts = [
+      userData.address_line_1,
+      userData.address_line_2,
+      userData.city,
+      userData.pin_code,
+    ];
+    return parts.filter(Boolean).join(", ");
+  };
+  const fullAddress = formatAddress();
+
   if (isLoading || isLoadingAuth) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-white">
-        <FontAwesomeIcon
-          icon={faSpinner}
-          spin
-          size="3x"
-          className="text-gray-400"
-        />
-      </div>
+      <DefaultLayout>
+        <div className="flex justify-center items-center min-h-screen bg-white">
+          <FontAwesomeIcon
+            icon={faSpinner}
+            spin
+            size="3x"
+            className="text-gray-400"
+          />
+        </div>
+      </DefaultLayout>
     );
   }
 
@@ -139,68 +153,22 @@ const Profile = () => {
                     <h1 className="text-2xl font-bold text-gray-900">
                       {userData?.first_name} {userData?.last_name}
                     </h1>
-                    <p className="text-gray-500 mt-1">{userData?.region}</p>
-                    <div className="flex items-center space-x-2 mt-4">
-                      {userData?.github && (
-                        <a
-                          href={userData.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200"
-                        >
-                          <FontAwesomeIcon
-                            icon={faGithub}
-                            className="text-gray-600 h-4 w-4"
-                          />
-                        </a>
-                      )}
-                      {userData?.linkedin && (
-                        <a
-                          href={userData.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200"
-                        >
-                          <FontAwesomeIcon
-                            icon={faLinkedin}
-                            className="text-gray-600 h-4 w-4"
-                          />
-                        </a>
-                      )}
-                      {userData?.portfolio && (
-                        <a
-                          href={userData.portfolio}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200"
-                        >
-                          <FontAwesomeIcon
-                            icon={faGlobe}
-                            className="text-gray-600 h-4 w-4"
-                          />
-                        </a>
-                      )}
-                      {userData?.website && (
-                        <a
-                          href={userData.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200"
-                        >
-                          <FontAwesomeIcon
-                            icon={faGlobe}
-                            className="text-gray-600 h-4 w-4"
-                          />
-                        </a>
-                      )}
-                    </div>
+                    {fullAddress && (
+                      <p className="text-gray-500 mt-1 flex items-center">
+                        <FontAwesomeIcon
+                          icon={faMapMarkerAlt}
+                          className="h-4 w-4 mr-2 text-gray-400"
+                        />
+                        {fullAddress}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
 
               {userData?.cv && (
                 <div className="space-y-4">
-                  <h2 className="text-lg font-semibold text-gray-200">
+                  <h2 className="text-lg font-semibold text-gray-500">
                     Documents
                   </h2>
                   <div className="bg-white rounded-lg border border-gray-400 p-4 flex items-center justify-between">
@@ -212,13 +180,13 @@ const Profile = () => {
                         />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-200 text-sm">
+                        <p className="font-medium text-gray-800 text-sm">
                           {getFileNameFromUrl(userData.cv)}
                         </p>
-                        <p className="text-sm text-gray-200">CV</p>
+                        <p className="text-sm text-gray-500">CV</p>
                       </div>
                     </div>
-                    <button className="text-gray-200 hover:text-gray-700">
+                    <button className="text-gray-500 hover:text-gray-700">
                       <FontAwesomeIcon icon={faEllipsis} className="h-5 w-5" />
                     </button>
                   </div>
@@ -226,28 +194,30 @@ const Profile = () => {
               )}
 
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-gray-100">Details</h2>
+                <h2 className="text-lg font-semibold text-gray-500">Details</h2>
                 <div className="bg-white rounded-lg border border-gray-400">
                   <div className="p-4 border-b border-gray-400">
-                    <p className="text-xs text-gray-200">Email</p>
+                    <p className="text-xs text-gray-500">Email</p>
                     <p className="text-sm font-medium text-gray-800">
                       {userData?.email}
                     </p>
                   </div>
-                  {userData?.phone && (
+                  {userData?.phone_number && (
                     <div className="p-4 border-b border-gray-400">
-                      <p className="text-xs text-gray-200">Phone</p>
+                      <p className="text-xs text-gray-500">Phone</p>
                       <p className="text-sm font-medium text-gray-800">
-                        {userData.phone}
+                        {userData.phone_number}
                       </p>
                     </div>
                   )}
-                  <div className="p-4">
-                    <p className="text-xs text-gray-200">Location</p>
-                    <p className="text-sm font-medium text-gray-800">
-                      {userData?.region}
-                    </p>
-                  </div>
+                  {fullAddress && (
+                    <div className="p-4">
+                      <p className="text-xs text-gray-500">Location</p>
+                      <p className="text-sm font-medium text-gray-800">
+                        {fullAddress}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </main>
