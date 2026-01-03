@@ -51,7 +51,7 @@ const Dropdown = ({
       {label && (
         <label
           htmlFor={dropdownId}
-          className="block mb-1 text-sm font-medium text-dark dark:text-gray-300"
+          className="block mb-1 text-sm font-medium text-dark"
         >
           {label}
         </label>
@@ -60,7 +60,7 @@ const Dropdown = ({
       {/* Dropdown Button */}
       <button
         id={dropdownId}
-        className="w-full border border-gray-300 text-dark dark:text-light dark:bg-gray-700 text-sm p-1 rounded flex justify-between items-center"
+        className="w-full border border-gray-300 text-dark text-sm p-1 rounded flex justify-between items-center"
         onClick={toggleDropdown}
         style={{
           minWidth: "180px",
@@ -92,7 +92,7 @@ const Dropdown = ({
         <ul
           className={`absolute ${
             direction === "up" ? "bottom-full mb-2" : "top-full mt-2"
-          } left-0 dark:text-light bg-white text-dark dark:bg-gray-800 shadow-md rounded max-h-40 overflow-y-auto z-50`}
+          } left-0 bg-white text-dark shadow-md rounded max-h-40 overflow-y-auto z-50`}
           style={{
             minWidth: "180px",
             maxWidth: "90%",
@@ -105,7 +105,7 @@ const Dropdown = ({
               key={item}
               role="option"
               tabIndex={0}
-              className="px-4 py-2 text-sm hover:bg-gray-400 dark:hover:bg-blue-100 cursor-pointer"
+              className="px-4 py-2 text-sm hover:bg-gray-400 cursor-pointer"
               onClick={() => handleSelect(item)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {

@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import Dropdown from "@/components/ui/Dropdown";
 import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
-
-import { industryOptions } from "@/constants/enums";
+import Autocomplete from "@/components/ui/Autocomplete";
+import { indianCities } from "@/constants/cities";
 
 type CompanyRegisterFormData = {
   companyName: string;
-  websitePrefix: string;
-  websiteDomain: string;
   headquarters: string;
-  selectedIndustry?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password: string;
 };
 
 const PlaceholderLogo = ({
@@ -93,69 +94,81 @@ const CompanyRegisterForm = ({
   ) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) => {
-  const handleIndustrySelect = (item: string) => {
-    const selectedOption = industryOptions.find((opt) => opt.label === item);
-    if (selectedOption) {
-      onFormDataChange("selectedIndustry", selectedOption.value);
-    }
-  };
-
   return (
     <form onSubmit={onSubmit} className="mt-8 space-y-6">
       <div>
         <TextField
           label="Company Name"
           value={formData.companyName}
-          onChange={(value) => onFormDataChange("companyName", value)}
-          placeholder="Guwahati-Jobs"
+          onChange={(value: string) => onFormDataChange("companyName", value)}
           isRequired
           name="company_name"
         />
       </div>
 
-      <div className="mt-1 flex rounded-md shadow-sm">
-        <TextField
-          label="Company Website (Optional)"
-          value={formData.websiteDomain}
-          onChange={(value) => onFormDataChange("websiteDomain", value)}
-          placeholder="Company Website"
-          name="company_website"
-        />
-      </div>
-
       <div>
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="company-hq"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Where is your company headquartered?{" "}
-            <span className="text-red-500">*</span>
-          </label>
-        </div>
-        <input
-          type="text"
-          name="company-hq"
+        <Autocomplete
           id="company-hq"
-          required
-          placeholder="Search the address"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          label="Company Location"
           value={formData.headquarters}
-          onChange={(e) => onFormDataChange("headquarters", e.target.value)}
+          onChange={(value: string) => onFormDataChange("headquarters", value)}
+          suggestions={indianCities}
+          placeholder="Search the city"
+          isRequired
+          name="company-hq"
         />
       </div>
 
       <div>
-        <Dropdown
-          items={industryOptions.map((opt) => opt.label)}
-          selected={
-            industryOptions.find(
-              (opt) => opt.value === formData.selectedIndustry
-            )?.label || ""
-          }
-          onSelect={handleIndustrySelect}
-          label="What industry is your company in?"
-          placeholder="Search industries"
+        <TextField
+          label="Work Email"
+          type="email"
+          value={formData.email}
+          onChange={(value: string) => onFormDataChange("email", value)}
+          placeholder="email@company.com"
+          isRequired
+          name="email"
+        />
+      </div>
+
+      <div className="flex flex-row space-x-4">
+        <TextField
+          label="First Name"
+          value={formData.firstName}
+          onChange={(value: string) => onFormDataChange("firstName", value)}
+          isRequired
+          name="first_name"
+        />
+        <TextField
+          label="Last Name"
+          value={formData.lastName}
+          onChange={(value: string) => onFormDataChange("lastName", value)}
+          isRequired
+          name="last_name"
+        />
+      </div>
+
+      <div>
+        <TextField
+          label="Phone Number"
+          value={formData.phoneNumber}
+          onChange={(value: string) => onFormDataChange("phoneNumber", value)}
+          isRequired
+          name="phone_number"
+          telephone={true}
+          hasHelpIcon={true}
+        />
+      </div>
+
+      <div>
+        <TextField
+          label="Password"
+          type="password"
+          value={formData.password}
+          onChange={(value: string) => onFormDataChange("password", value)}
+          placeholder="Create a password"
+          isRequired
+          name="password"
         />
       </div>
 
@@ -179,27 +192,24 @@ const CompanyRegisterForm = ({
 export default function CompanyRegister() {
   const [formData, setFormData] = useState<CompanyRegisterFormData>({
     companyName: "",
-    websitePrefix: "https://",
-    websiteDomain: "",
     headquarters: "",
-    selectedIndustry: undefined,
+    email: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    password: "",
   });
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Registration submitted:", {
-      companyName: formData.companyName,
-      website: formData.websitePrefix + formData.websiteDomain,
-      headquarters: formData.headquarters,
-      industry: formData.selectedIndustry,
-    });
+    console.log("Registration submitted:", formData);
   };
 
   const handleFormDataChange = (
     field: keyof CompanyRegisterFormData,
     value: string
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev: CompanyRegisterFormData) => ({ ...prev, [field]: value }));
   };
 
   return (

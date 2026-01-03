@@ -28,7 +28,7 @@ export default function CompanyLogin() {
       });
       const { token, user } = response.data;
       login(token);
-      router.push("/recruiter/");
+      router.push("/onboarding/");
     } catch (err: any) {
       console.error("Login failed:", err);
       setError(

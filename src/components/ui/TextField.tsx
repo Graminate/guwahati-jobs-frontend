@@ -8,14 +8,31 @@ const ErrorIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    strokeWidth="1.5"
+    strokeWidth="2"
     stroke="currentColor"
-    className="size-5 text-red-200"
+    className="size-6 text-red-500"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+    />
+  </svg>
+);
+
+const HelpIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth="2"
+    stroke="currentColor"
+    className="size-5 text-gray-500 cursor-pointer"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
     />
   </svg>
 );
@@ -50,6 +67,9 @@ type Props = BaseInputProps & {
   className?: string;
   inputClassName?: string;
   id?: string;
+  telephone?: boolean;
+  hasHelpIcon?: boolean;
+  countryCode?: string;
 };
 
 const TextField = forwardRef<HTMLInputElement, Props>(
@@ -72,6 +92,9 @@ const TextField = forwardRef<HTMLInputElement, Props>(
       className = "",
       inputClassName = "",
       id: providedId,
+      telephone = false,
+      hasHelpIcon = false,
+      countryCode = "+91",
       ...rest
     },
     ref
@@ -96,20 +119,22 @@ const TextField = forwardRef<HTMLInputElement, Props>(
     };
 
     const baseInputClasses =
-      "text-sm rounded-md block w-full p-2.5 placeholder-gray-300 focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed read-only:opacity-70 read-only:cursor-default";
+      "text-sm rounded-md block w-full p-2.5 placeholder-gray-300 focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed read-only:opacity-70 read-only:cursor-default transition-all duration-200";
 
     const stateClasses = clsx({
-      "border border-gray-400 text-gray-900 focus:ring-indigo-200 focus:border-indigo-200":
+      "border border-gray-300 focus:ring-indigo-100 focus:border-indigo-200":
         !isError && !isSuccess,
-      "border border-green-500 text-green-900 placeholder-green-700 focus:ring-green-500 focus:border-green-500":
+      "border border-green-500 focus:ring-green-500 focus:border-green-500":
         isSuccess,
-      "border border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500":
+      "border border-red-500 focus:ring-red-100 focus:border-red-500":
         isError,
     });
 
     const iconPaddingClasses = clsx({
       "pl-10": icon && iconPosition === "left",
-      "pr-10": (icon && iconPosition === "right") || type === "password",
+      "pr-12":
+        (icon && iconPosition === "right") || type === "password" || isError,
+      "pl-20": telephone,
     });
 
     const widthClass = clsx({
@@ -127,16 +152,36 @@ const TextField = forwardRef<HTMLInputElement, Props>(
     return (
       <div className={clsx("flex flex-col", widthClass, className)}>
         {label && (
-          <label
-            htmlFor={inputId}
-            className="block mb-1 text-sm font-medium text-dark"
-          >
-            {label}
-            {isRequired && <span className="text-red-500 ml-1">*</span>}
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label
+              htmlFor={inputId}
+              className="block text-sm font-medium text-gray-700"
+            >
+              {label}
+              {isRequired && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            {hasHelpIcon && <HelpIcon />}
+          </div>
         )}
         <div className="relative flex items-center">
-          {icon && iconPosition === "left" && (
+          {telephone && (
+            <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none z-10">
+              <div className="flex items-center space-x-1 bg-gray-500 rounded px-2 py-1.5 text-sm font-medium text-gray-dark">
+                <span>{countryCode}</span>
+                <svg
+                  className="size-3.5 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2.5"
+                >
+                  <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {icon && iconPosition === "left" && !telephone && (
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               {icon}
             </div>
@@ -164,9 +209,11 @@ const TextField = forwardRef<HTMLInputElement, Props>(
             {...rest}
           />
 
-          {/* Right Icon / Password Toggle */}
+          {/* Right Icon / Password Toggle / Error Icon */}
           <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-            {type === "password" ? (
+            {isError ? (
+              <ErrorIcon />
+            ) : type === "password" ? (
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -194,15 +241,12 @@ const TextField = forwardRef<HTMLInputElement, Props>(
         {(hasErrorMessage || hasHelperText) && (
           <div
             id={descriptionId}
-            className={clsx("mt-1 text-sm flex items-center", {
-              "text-red-600": isError,
+            className={clsx("mt-1.5 text-sm flex items-center", {
+              "text-red-500 font-medium": isError,
               "text-gray-300": !isError,
             })}
           >
-            {isError && <ErrorIcon />}
-            <p className={clsx({ "ml-1": isError })}>
-              {isError ? errorMessage : helperText}
-            </p>
+            <p>{isError ? errorMessage : helperText}</p>
           </div>
         )}
       </div>
