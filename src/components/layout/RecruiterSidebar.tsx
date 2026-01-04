@@ -73,7 +73,7 @@ const RecruiterSidebar = ({ user }: RecruiterSidebarProps) => {
         { label: "Scheduled", href: "/recruiter/mailbox/scheduled" },
       ],
     },
-    { label: "Settings", icon: faGear, href: "/onboarding/settings" },
+    { label: "Settings", icon: faGear, href: "/settings/company/details" },
   ];
 
   const handleLogout = () => {

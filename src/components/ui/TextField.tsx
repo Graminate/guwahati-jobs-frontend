@@ -72,6 +72,8 @@ type Props = BaseInputProps & {
   countryCode?: string;
   hasCurrency?: boolean;
   currencySymbol?: string;
+  hasPrefix?: boolean;
+  prefixText?: string;
 };
 
 const TextField = forwardRef<HTMLInputElement, Props>(
@@ -99,6 +101,8 @@ const TextField = forwardRef<HTMLInputElement, Props>(
       countryCode = "+91",
       hasCurrency = false,
       currencySymbol = "₹",
+      hasPrefix = false,
+      prefixText = "https://",
       ...rest
     },
     ref
@@ -138,7 +142,7 @@ const TextField = forwardRef<HTMLInputElement, Props>(
       "pl-10": icon && iconPosition === "left",
       "pr-12":
         (icon && iconPosition === "right") || type === "password" || isError,
-      "pl-20": telephone,
+      "pl-20": telephone || hasPrefix,
       "pr-10": hasCurrency,
     });
 
@@ -182,6 +186,14 @@ const TextField = forwardRef<HTMLInputElement, Props>(
                 >
                   <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
+              </div>
+            </div>
+          )}
+          
+          {hasPrefix && (
+            <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none z-10">
+              <div className="flex items-center bg-gray-500 rounded px-2 py-1.5 text-sm font-medium text-gray-dark border-r border-gray-300 rounded-r-none">
+                <span>{prefixText}</span>
               </div>
             </div>
           )}

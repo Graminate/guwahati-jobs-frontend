@@ -1,3 +1,5 @@
+import clsx from "clsx";
+
 type Props = {
   text?: string;
   arrow?: "" | "up" | "down" | "left" | "right";
@@ -8,6 +10,7 @@ type Props = {
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   className?: string;
+  icon?: React.ReactNode;
 };
 
 const Button = ({
@@ -20,6 +23,7 @@ const Button = ({
   type = "button",
   onClick,
   className = "",
+  icon,
 }: Props) => {
   const getWidth = (): string => {
     switch (width) {
@@ -99,6 +103,7 @@ const Button = ({
         </svg>
       )}
 
+      {icon && <span className={clsx("flex items-center", text && "mr-2")}>{icon}</span>}
       {text}
 
       {["right", "up", "down"].includes(arrow) && (
