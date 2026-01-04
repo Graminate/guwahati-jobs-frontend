@@ -28,9 +28,10 @@ type User = {
 type Props = {
   children: React.ReactNode;
   noSidebar?: boolean;
+  sidebar?: React.ReactNode;
 };
 
-const DefaultLayout = ({ children, noSidebar = false }: Props) => {
+const DefaultLayout = ({ children, noSidebar = false, sidebar }: Props) => {
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -202,13 +203,17 @@ const DefaultLayout = ({ children, noSidebar = false }: Props) => {
       <div className="flex flex-1 w-full mx-auto">
         {!noSidebar && (
           <div className="hidden md:block flex-shrink-0 w-0">
-            <Sidebar
-              isMobile={false}
-              isLoggedIn={isLoggedIn}
-              user={user}
-              currentPath={currentPath}
-              homepageLinks={homepageNavLinks}
-            />
+            {sidebar ? (
+              sidebar
+            ) : (
+              <Sidebar
+                isMobile={false}
+                isLoggedIn={isLoggedIn}
+                user={user}
+                currentPath={currentPath}
+                homepageLinks={homepageNavLinks}
+              />
+            )}
           </div>
         )}
 

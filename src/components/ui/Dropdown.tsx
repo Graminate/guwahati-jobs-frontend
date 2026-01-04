@@ -7,6 +7,9 @@ type Props = {
   direction?: "up" | "down";
   label?: string | null;
   placeholder?: string;
+  width?: string;
+  className?: string;
+  isDisabled?: boolean;
 };
 
 const Dropdown = ({
@@ -16,13 +19,18 @@ const Dropdown = ({
   direction = "down",
   label = null,
   placeholder = "Select an option",
+  width = "180px",
+  className = "",
+  isDisabled = false,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const dropdownId = `dropdown-${Math.random().toString(36).substring(2, 15)}`;
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+    if (!isDisabled) {
+      setIsOpen(!isOpen);
+    }
   };
 
   const handleSelect = (item: string) => {
@@ -47,7 +55,7 @@ const Dropdown = ({
   }, []);
 
   return (
-    <div className="relative w-full md:w-auto" ref={dropdownRef}>
+    <div className={`relative w-full md:w-auto ${className}`} ref={dropdownRef}>
       {label && (
         <label
           htmlFor={dropdownId}
@@ -60,11 +68,12 @@ const Dropdown = ({
       {/* Dropdown Button */}
       <button
         id={dropdownId}
-        className="w-full border border-gray-300 text-dark text-sm p-1 rounded flex justify-between items-center"
+        className="w-full border border-gray-300 text-dark text-sm p-2 rounded-xl flex justify-between items-center transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={toggleDropdown}
+        disabled={isDisabled}
         style={{
-          minWidth: "180px",
-          maxWidth: "90%",
+          minWidth: width,
+          maxWidth: "100%",
           boxSizing: "border-box",
         }}
         aria-haspopup="listbox"
@@ -94,8 +103,8 @@ const Dropdown = ({
             direction === "up" ? "bottom-full mb-2" : "top-full mt-2"
           } left-0 bg-white text-dark shadow-md rounded max-h-40 overflow-y-auto z-50`}
           style={{
-            minWidth: "180px",
-            maxWidth: "90%",
+            minWidth: width,
+            maxWidth: "100%",
             boxSizing: "border-box",
           }}
           role="listbox"

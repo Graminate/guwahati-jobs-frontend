@@ -7,6 +7,7 @@ type Props = {
   add?: boolean;
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
+  className?: string;
 };
 
 const Button = ({
@@ -18,6 +19,7 @@ const Button = ({
   add = false,
   type = "button",
   onClick,
+  className = "",
 }: Props) => {
   const getWidth = (): string => {
     switch (width) {
@@ -37,7 +39,7 @@ const Button = ({
       case "home":
         return "bg-white text-sm my-10 py-3 px-7 rounded-md shadow-lg hover:bg-black hover:text-white border border-solid border-black";
       case "primary":
-        return "bg-gray-200 text-sm hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 text-white justify-center";
+        return "bg-blue-200 text-sm hover:bg-blue-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 text-white justify-center";
       case "secondary":
         return "bg-white text-sm disabled:text-gray-400 disabled:bg-transparent disabled:border-gray-300 hover:bg-gray-300 hover:bg-light text-gray-200 hover:text-gray-200 border border-gray-300 justify-center";
       case "ghost":
@@ -63,7 +65,7 @@ const Button = ({
   return (
     <button
       type={type}
-      className={`${buttonClass} flex items-center`}
+      className={`${buttonClass} ${className} flex items-center`}
       disabled={isDisabled}
       onClick={onClick}
     >
