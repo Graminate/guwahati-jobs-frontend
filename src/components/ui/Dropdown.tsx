@@ -11,6 +11,7 @@ type Props = {
   className?: string;
   isDisabled?: boolean;
   icon?: React.ReactNode;
+  itemDescriptions?: Record<string, string>;
 };
 
 const Dropdown = ({
@@ -24,6 +25,7 @@ const Dropdown = ({
   className = "",
   isDisabled = false,
   icon,
+  itemDescriptions,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -106,7 +108,7 @@ const Dropdown = ({
         <ul
           className={`absolute ${
             direction === "up" ? "bottom-full mb-2" : "top-full mt-2"
-          } left-0 bg-white text-dark shadow-md rounded max-h-40 overflow-y-auto z-50`}
+          } left-0 bg-white text-dark shadow-md rounded overflow-hidden z-50`}
           style={{
             minWidth: width,
             maxWidth: "100%",
@@ -119,7 +121,11 @@ const Dropdown = ({
               key={item}
               role="option"
               tabIndex={0}
-              className="px-4 py-2 text-sm hover:bg-gray-400 cursor-pointer"
+              className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
+                selected === item
+                  ? "bg-blue-50 text-blue-600"
+                  : "hover:bg-gray-50 text-gray-700"
+              }`}
               onClick={() => handleSelect(item)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
@@ -128,7 +134,16 @@ const Dropdown = ({
               }}
               aria-selected={selected === item}
             >
-              {item}
+              <div className="flex flex-col">
+                <span className={`font-normal ${selected === item ? "text-blue-600" : "text-gray-900"}`}>
+                  {item}
+                </span>
+                {itemDescriptions && itemDescriptions[item] && (
+                  <span className={`text-[11px] leading-tight ${selected === item ? "text-blue-200" : "text-gray-200"}`}>
+                    {itemDescriptions[item]}
+                  </span>
+                )}
+              </div>
             </li>
           ))}
         </ul>

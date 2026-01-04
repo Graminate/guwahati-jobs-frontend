@@ -3,22 +3,18 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowLeft,
   faEye,
   faFileLines,
   faClipboardList,
   faSitemap,
   faUsers,
-  faPlus,
   faXmark,
   faTrash,
   faCalendar,
   faInfoCircle,
   faBriefcase,
-  faGraduationCap,
   faLocationDot,
   faFolderOpen,
-  faIdCard,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "@/components/ui/Button";
 import TextField from "@/components/ui/TextField";
@@ -52,7 +48,7 @@ const CreateJobPage = () => {
   const [cvRequirement, setCvRequirement] = useState("Required");
   const [coverLetterRequirement, setCoverLetterRequirement] = useState("Optional");
   const [questions, setQuestions] = useState([
-    { id: 1, question: "When are you available to start working with us?", answerType: "Date", isOptional: true }
+    { id: 1, question: "When are you available to start working with us?", answerType: "Date", isOptional: true, status: "Optional" }
   ]);
 
   const isMandatoryFieldEntered = 
@@ -157,7 +153,7 @@ const CreateJobPage = () => {
             {activeTab === "details" ? (
               <div className="space-y-8">
                 <div className="text-center mb-12">
-                  <h1 className="text-3xl font-bold text-gray-900">Create your job ad</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">Create your job ad</h1>
                 </div>
                 <TextField
                   label="Job Title"
@@ -165,7 +161,6 @@ const CreateJobPage = () => {
                   value={title}
                   onChange={setTitle}
                   placeholder="Enter job title"
-                  inputClassName="!rounded-xl !py-3 !px-4"
                 />
 
                 <TextArea
@@ -376,7 +371,7 @@ const CreateJobPage = () => {
                         width="large"
                         onClick={() => setActiveTab("form")}
                         isDisabled={!isFormValid}
-                        className="!bg-blue-50 !text-blue-600 !rounded-xl !font-bold !py-4 hover:!bg-blue-100 transition-colors justify-center !w-full"
+                        className="py-2"
                       />
                     </div>
                   </div>
@@ -384,20 +379,20 @@ const CreateJobPage = () => {
             ) : activeTab === "form" ? (
               <div className="space-y-10">
                 <div className="text-center mb-12">
-                  <h1 className="text-3xl font-bold text-gray-900">Target the right candidates</h1>
+                  <h1 className="text-2xl font-bold">Target the right candidates</h1>
                 </div>
 
                 {/* Job Summary Card */}
-                <div className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 shadow-sm max-w-2xl mx-auto">
-                  <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
+                <div className="bg-white border border-gray-400 rounded-xl p-4 flex items-center gap-4 max-w-2xl mx-auto">
+                  <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center">
                     <FontAwesomeIcon icon={faFolderOpen} className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-900">{title || "Job Title"}</h3>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 mt-1 text-sm">
                       <span className="flex items-center gap-1.5">
                         <FontAwesomeIcon icon={faLocationDot} className="w-3.5 h-3.5" />
-                        {office ? `${office}, India (hybrid)` : "City, India (hybrid)"}
+                        {`${office}`}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <FontAwesomeIcon icon={faBriefcase} className="w-3.5 h-3.5" />
@@ -415,7 +410,7 @@ const CreateJobPage = () => {
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-xl font-bold text-gray-900">Application documents</h3>
-                    <p className="text-sm text-gray-500 mt-1">Customize the document requirements for this job.</p>
+                    <p className="text-sm mt-1">Customize the document requirements for this job.</p>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-6 pb-8 border-b border-gray-100">
@@ -436,38 +431,46 @@ const CreateJobPage = () => {
 
                 {/* Screening Questions */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-bold text-gray-900">Screening Questions</h3>
-                    <span className="px-2.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded uppercase">Optional</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-xl font-bold">Screening Questions</h3>
+                      <span className="px-2.5 py-0.5 bg-gray-400 text-gray-600 text-[10px] font-bold rounded-full">Optional</span>
+                    </div>
+                    <p className="text-sm">Add screening questions to find the best candidates more easily</p>
                   </div>
-                  <p className="text-sm text-gray-500">Add screening questions to find the best candidates more easily</p>
 
                   <div className="flex gap-6">
                     <div className="flex-1 space-y-6">
                       {questions.map((q, idx) => (
-                        <div key={idx} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
+                        <div key={idx} className="bg-white border border-gray-400 rounded-2xl p-6 space-y-4">
                           <div className="flex justify-between items-center">
-                            <h4 className="font-bold text-gray-900">Start date</h4>
+                            <h4 className="font-bold">Start date</h4>
                             <div className="flex items-center gap-3">
                               <Dropdown
                                 items={["Optional", "Required", "Knockout"]}
-                                selected={q.isOptional ? "Optional" : "Required"}
+                                selected={q.status}
                                 onSelect={(val) => {
                                   const newQuestions = [...questions];
+                                  newQuestions[idx].status = val;
                                   newQuestions[idx].isOptional = val === "Optional";
                                   setQuestions(newQuestions);
                                 }}
-                                width="120px"
+                                width="180px"
+                                itemDescriptions={{
+                                  "Optional": "Candidate is allowed to skip it",
+                                  "Required": "Candidate will have to answer it",
+                                  "Knockout": "Rejection email will be sent next day to the candidates who don't meet your requirements"
+                                }}
                               />
-                              <button className="text-red-400 hover:text-red-600 p-1.5 border border-red-100 rounded-lg">
-                                <FontAwesomeIcon icon={faTrash} className="w-3.5 h-3.5" />
+                              <button className="text-red-200 hover:bg-gray-50 px-2.5 py-1.5 border border-gray-400 rounded-lg">
+                                <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
                               </button>
                             </div>
                           </div>
                           
                           <div className="flex gap-4">
                              <div className="flex-[2]">
-                               <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Question</label>
+                               <label className="block text-sm mb-1.5">Question</label>
                                <TextField
                                  value={q.question}
                                  onChange={(val) => {
@@ -476,11 +479,10 @@ const CreateJobPage = () => {
                                    setQuestions(newQuestions);
                                  }}
                                  placeholder="When are you available to start working with us?"
-                                 inputClassName="!rounded-xl !py-3 !px-4"
                                />
                              </div>
                              <div className="flex-1">
-                               <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Answer type</label>
+                               <label className="block text-sm mb-1.5">Answer type</label>
                                <Dropdown
                                  items={["Date", "Short text", "Long text", "Multiple choice"]}
                                  selected={q.answerType}
@@ -500,14 +502,14 @@ const CreateJobPage = () => {
 
                       {/* Add Question Area */}
                       <div className="space-y-4 pt-4">
-                        <h4 className="font-bold text-gray-900">Add question</h4>
+                        <h4 className="font-bold">Add question</h4>
                         <div className="flex flex-wrap gap-2">
                           {[
                             "Current city", "Driver's license", "Visa status", 
                             "Onsite work", "Remote work", "English proficiency", 
                             "Employment type", "Shift Work", "Pronouns"
                           ].map((chip) => (
-                            <button key={chip} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold hover:bg-blue-100 transition-colors">
+                            <button key={chip} className="px-4 py-2 bg-blue-400 text-blue-200 rounded-full text-sm hover:bg-blue-100 transition-colors">
                               {chip}
                             </button>
                           ))}
