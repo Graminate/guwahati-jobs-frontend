@@ -10,6 +10,7 @@ type Props = {
   width?: string;
   className?: string;
   isDisabled?: boolean;
+  icon?: React.ReactNode;
 };
 
 const Dropdown = ({
@@ -22,6 +23,7 @@ const Dropdown = ({
   width = "180px",
   className = "",
   isDisabled = false,
+  icon,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -79,7 +81,10 @@ const Dropdown = ({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        {selected || placeholder}
+        <span className="flex items-center gap-2">
+          {icon && <span className="text-gray-400">{icon}</span>}
+          {selected || placeholder}
+        </span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

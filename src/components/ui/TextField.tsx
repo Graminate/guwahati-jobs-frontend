@@ -70,6 +70,8 @@ type Props = BaseInputProps & {
   telephone?: boolean;
   hasHelpIcon?: boolean;
   countryCode?: string;
+  hasCurrency?: boolean;
+  currencySymbol?: string;
 };
 
 const TextField = forwardRef<HTMLInputElement, Props>(
@@ -95,6 +97,8 @@ const TextField = forwardRef<HTMLInputElement, Props>(
       telephone = false,
       hasHelpIcon = false,
       countryCode = "+91",
+      hasCurrency = false,
+      currencySymbol = "₹",
       ...rest
     },
     ref
@@ -135,6 +139,7 @@ const TextField = forwardRef<HTMLInputElement, Props>(
       "pr-12":
         (icon && iconPosition === "right") || type === "password" || isError,
       "pl-20": telephone,
+      "pr-10": hasCurrency,
     });
 
     const widthClass = clsx({
@@ -177,6 +182,14 @@ const TextField = forwardRef<HTMLInputElement, Props>(
                 >
                   <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
+              </div>
+            </div>
+          )}
+
+          {hasCurrency && (
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none z-10">
+              <div className="flex items-center bg-gray-500 text-gray-100 rounded px-2 py-1.5 text-sm font-medium border border-gray-400">
+                <span>{currencySymbol}</span>
               </div>
             </div>
           )}
